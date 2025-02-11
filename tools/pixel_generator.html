@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Image Pixel Image Generator</title>
+    <style>
+        canvas { border: 1px solid black; margin-right: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Custom Image Pixel Image Generator</h1>
+    <textarea id="colorInput" placeholder="Enter up to 4 colors (e.g. #ff0000, #00ff00, #0000ff, #ffff00)" rows="4" cols="40"></textarea>
+    <br>
+    <label for="bgColor">Background Color:</label>
+    <input type="color" id="bgColor" value="#ffffff"><br>
+    <label for="transparentToggle">Transparent Background:</label>
+    <input type="checkbox" id="transparentToggle"> Enable Transparent Background
+    <br>
+    <label for="shapeSelector">Select Pixel Shape:</label>
+    <select id="shapeSelector">
+        <option value="square">Square</option>
+        <option value="circle">Circle</option>
+        <option value="diamond">Diamond</option>
+        <option value="verticalStripe">Vertical Stripe</option>
+        <option value="horizontalStripe">Horizontal Stripe</option>
+    </select>
+    <br>
+    <label for="gradientSource">Gradient Source:</label>
+    <select id="gradientSource">
+        <option value="corners">Corners</option>
+        <option value="edges">Edges</option>
+        <option value="customImage">Upload Image</option>
+    </select>
+    <br>
+    <label for="imageUpload">Upload Black and White Image:</label>
+    <input type="file" id="imageUpload" accept="image/*" onchange="loadImageAndGeneratePixels()">
+    <br>
+    <label for="numSources">Number of Sources (1 to 4):</label>
+    <input type="number" id="numSources" min="1" max="4" value="2">
+    <br>
+    <!-- Slider for controlling the gradient spread -->
+    <label for="spreadSlider">Adjust Gradient Spread: </label>
+    <input type="range" id="spreadSlider" min="0.2" max="1" step="0.1" value="0.8">
+    <br>
+    <input type="number" id="width" placeholder="Width" value="400" disabled />
+    <input type="number" id="height" placeholder="Height" value="400" disabled />
+    <br>
+    <!-- Slider for adjusting the contrast level -->
+    <label for="contrastSlider">Adjust Contrast: </label>
+    <input type="range" id="contrastSlider" min="0" max="200" value="100" oninput="adjustContrast()">
+    <br>
+    <button onclick="generateImage()">Generate Gradient and Pixels</button>
+    <br><br>
+    <div style="display: flex;">
+        <canvas id="bwCanvas"></canvas>
+        <canvas id="colorCanvas"></canvas>
+    </div>
+    <br>
+    <button onclick="exportAsSVG()">Export as SVG</button>
+    
+    <script>
+        let bwImageData = null; // Store the uploaded image data
+        let uploadedImageDimensions = null; // To store the dimensions of the uploaded image
+        let svgElements = []; // Store SVG elements for export
+
+        // Load the uploaded image and immediately generate the second pass
+        function loadImageAndGeneratePixels() {
+            const fileInput = document.getElementById('imageUpload').files[0];
+            const bwCanvas = document.getElementById('bwCanvas');
+            const bwCtx = bwCanvas.getContext('2d');
+            const colorCanvas = document.getElementById('colorCanvas');
+            const colorCtx = colorCanvas.getContext('2d');
+
+            if (fileInput) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        // Automatically adjust canvas dimensions to match uploaded image
+                        const width = img.width;
+                        const height = img.height;
+                        uploadedImageDimensions = { width, height };
+
+                        // Update the input fields to match the image dimensions
+                        document.getElementById('width').value = width;
+                        document.getElementById('height').value = height;
+
+                        bwCanvas.width = width;
+                        bwCanvas.height = height;
+                        colorCanvas.width = width;
+                        colorCanvas.height = height;
+
+                        // Display the uploaded image on the bwCanvas
+                        bwCtx.drawImage(img, 0, 0, width, height);
+
+                        // Store the image data for future generations
+                        bwImageData = bwCtx.getImageData(0, 0, width, height);
+                        const bwLuminosityData = bwImageData.data;
+
+                        // Generate pixels using the uploaded image immediately
+                        const colorsInput = document.getElementById('colorInput').value.trim();
+                        const colors = colorsInput ? colorsInput.split(',').map(c => c.trim()) : ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
+                        drawPixelsWithScatter(colorCtx, width, height, bwLuminosityData, colors); // Second pass
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput);
+            } else {
+                alert("Please upload a black and white image.");
+            }
+        }
+
+        function generateImage() {
+            const colorsInput = document.getElementById('colorInput').value.trim();
+            const colors = colorsInput ? colorsInput.split(',').map(c => c.trim()) : ['#ff0000', '#00ff00', '#0000ff', '#ffff00']; // Default colors
+            const bgColor = document.getElementById('bgColor').value; // Get background color
+            const transparentBackground = document.getElementById('transparentToggle').checked; // Check if transparent background is enabled
+            const shape = document.getElementById('shapeSelector').value; // Get the selected pixel shape
+            const gradientSource = document.getElementById('gradientSource').value; // Get source (corners, edges, or custom image)
+            const numSources = parseInt(document.getElementById('numSources').value); // Get the number of sources (1 to 4)
+            const spreadFactor = parseFloat(document.getElementById('spreadSlider').value); // Get gradient spread factor
+
+            const bwCanvas = document.getElementById('bwCanvas');
+            const bwCtx = bwCanvas.getContext('2d');
+            const colorCanvas = document.getElementById('colorCanvas');
+            const colorCtx = colorCanvas.getContext('2d');
+
+            // Use the image's dimensions if an image was uploaded
+            const width = uploadedImageDimensions ? uploadedImageDimensions.width : parseInt(document.getElementById('width').value) || 400;
+            const height = uploadedImageDimensions ? uploadedImageDimensions.height : parseInt(document.getElementById('height').value) || 400;
+
+            // Set canvas dimensions
+            colorCanvas.width = width;
+            colorCanvas.height = height;
+
+            // Set the background color or make it transparent
+            if (!transparentBackground) {
+                colorCtx.fillStyle = bgColor;
+                colorCtx.fillRect(0, 0, width, height); // Apply background to the color canvas
+            } else {
+                // Clear the canvas for a transparent background
+                colorCtx.clearRect(0, 0, width, height);
+            }
+
+            svgElements = []; // Reset the SVG elements array
+
+            if (bwImageData) {
+                // Use the previously uploaded image data for pixel generation
+                const bwLuminosityData = bwImageData.data;
+                drawPixelsWithScatter(colorCtx, width, height, bwLuminosityData, colors, shape); // Second pass
+            } else if (gradientSource !== 'customImage') {
+                // Generate gradient from corners or edges if no custom image
+                if (gradientSource === 'corners') {
+                    createCornerRadialGradients(bwCtx, width, height, numSources, spreadFactor);
+                } else {
+                    createEdgeRectangularGradients(bwCtx, width, height, numSources, spreadFactor);
+                }
+
+                // Store the gradient as the first pass image data for further processing
+                bwImageData = bwCtx.getImageData(0, 0, width, height);
+                const bwLuminosityData = bwImageData.data;
+                drawPixelsWithScatter(colorCtx, width, height, bwLuminosityData, colors, shape);
+            }
+        }
+
+        // Create radial gradients from selected number of corners with spread control
+        function createCornerRadialGradients(ctx, width, height, numSources, spreadFactor) {
+            const corners = [
+                { x: 0, y: 0 }, // Top-left
+                { x: width, y: 0 }, // Top-right
+                { x: 0, y: height }, // Bottom-left
+                { x: width, y: height } // Bottom-right
+            ];
+
+            const selectedCorners = corners.slice(0, numSources); // Use the number of sources chosen
+
+            selectedCorners.forEach(corner => {
+                const gradient = ctx.createRadialGradient(corner.x, corner.y, 0, corner.x, corner.y, Math.max(width, height) * spreadFactor);
+                gradient.addColorStop(0, '#000000'); // Black at the center of the gradient
+                gradient.addColorStop(1, '#ffffff'); // White at the edges
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+            });
+
+            ctx.globalCompositeOperation = 'lighter'; // Blend between gradients
+        }
+
+        // Create rectangular gradients from selected number of edges with spread control
+        function createEdgeRectangularGradients(ctx, width, height, numSources, spreadFactor) {
+            const edges = [
+                { x0: 0, y0: 0, x1: width, y1: 0 }, // Top edge
+                { x0: width, y0: 0, x1: width, y1: height }, // Right edge
+                { x0: 0, y0: height, x1: width, y1: height }, // Bottom edge
+                { x0: 0, y0: 0, x1: 0, y1: height } // Left edge
+            ];
+
+            const selectedEdges = edges.slice(0, numSources); // Use the number of sources chosen
+
+            selectedEdges.forEach(edge => {
+                const gradient = ctx.createLinearGradient(edge.x0, edge.y0, edge.x1 * spreadFactor, edge.y1 * spreadFactor);
+                gradient.addColorStop(0, '#000000'); // Black at the edge
+                gradient.addColorStop(1, '#ffffff'); // White at the opposite edge
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+            });
+
+            ctx.globalCompositeOperation = 'lighter'; // Blend between gradients
+        }
+
+        // Adjust contrast dynamically
+        function adjustContrast() {
+            const contrastLevel = parseInt(document.getElementById('contrastSlider').value);
+            const contrastFactor = (259 * (contrastLevel + 255)) / (255 * (259 - contrastLevel));
+
+            const bwCanvas = document.getElementById('bwCanvas');
+            const bwCtx = bwCanvas.getContext('2d');
+            const width = bwCanvas.width;
+            const height = bwCanvas.height;
+
+            const bwData = bwCtx.getImageData(0, 0, width, height);
+            const bwPixels = bwData.data;
+
+            // Adjust contrast
+            for (let i = 0; i < bwPixels.length; i += 4) {
+                for (let j = 0; j < 3; j++) { // R, G, B channels
+                    bwPixels[i + j] = Math.min(255, Math.max(0, contrastFactor * (bwPixels[i + j] - 128) + 128));
+                }
+            }
+
+            // Update the canvas with the adjusted contrast
+            bwCtx.putImageData(bwData, 0, 0);
+        }
+
+        // Pixel generation logic (second pass with dynamic sizes, scatter, and shape selection)
+function drawPixelsWithScatter(ctx, width, height, bwData, colors, shape) {
+    // Calculate dynamic shape sizes based on image dimensions
+    const maxSize = Math.max(width, height);
+    const size40 = maxSize * 0.015; // Set biggest shape to 2% of the larger dimension
+    const size30 = size40 * (30 / 40); // Maintain original size ratio
+    const size20 = size40 * (20 / 40);
+    const size10 = size40 * (10 / 40);
+
+    const sizeColorMapping = {
+        [size40]: colors[0],
+        [size30]: colors[1],
+        [size20]: colors[2],
+        [size10]: colors[3]
+    };
+
+    const gridSizes = [size40, size30, size20, size10]; // Dynamic sizes
+
+    gridSizes.forEach((gridSize) => {
+        const color = hexToRgb(sizeColorMapping[gridSize]);
+
+        for (let y = 0; y < height; y += gridSize + 5) {
+            for (let x = 0; x < width; x += gridSize + 5) {
+                const index = (Math.floor(y) * width + Math.floor(x)) * 4;
+                const luminosity = bwData[index];
+
+                // Scatter chance: 20% chance to place pixels randomly without considering luminosity
+                const scatterChance = Math.random();
+                if (scatterChance < 0.02) {
+                    drawShape(ctx, x, y, gridSize, color, shape, width, height);
+                } else {
+                    // Overlapping thresholds for pixel sizes based on luminosity
+                    if ((gridSize === size40 && luminosity < 80) ||
+                        (gridSize === size30 && luminosity >= 60 && luminosity < 140) ||
+                        (gridSize === size20 && luminosity >= 100 && luminosity < 150) ||
+                        (gridSize === size10 && luminosity >= 150)) {
+
+
+                        const density = getDensityFromLuminosity(luminosity);
+                        if (Math.random() < density) {
+                            drawShape(ctx, x, y, gridSize, color, shape, width, height);
+                            createSVGShape(x, y, gridSize, color, shape);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    ctx.globalAlpha = 1; // Reset globalAlpha after drawing
+}
+
+
+        // Function to draw a pixel in the selected shape and generate corresponding SVG
+function drawShape(ctx, x, y, gridSize, color, shape, width, height) {
+    const randomOpacity = Math.random() * (0.8 - 0.6) + 0.6; // Random opacity between 60%-80%
+    ctx.globalAlpha = randomOpacity;
+    ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${ctx.globalAlpha})`;
+
+    switch (shape) {
+        case 'circle':
+            ctx.beginPath();
+            ctx.arc(x + gridSize / 2, y + gridSize / 2, gridSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+        case 'diamond':
+            ctx.save();
+            ctx.translate(x + gridSize / 2, y + gridSize / 2);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(-gridSize / 2, -gridSize / 2, gridSize, gridSize);
+            ctx.restore();
+            break;
+        case 'verticalStripe':
+            const stripeHeight = Math.random() * 0.15 * height + 0.05 * height;
+            ctx.fillRect(x + gridSize / 4, y, gridSize / 2, stripeHeight);
+            break;
+        case 'horizontalStripe':
+            const stripeWidth = Math.random() * 0.15 * width + 0.05 * width;
+            ctx.fillRect(x, y + gridSize / 4, stripeWidth, gridSize / 2);
+            break;
+        default: // square
+            ctx.fillRect(x, y, gridSize * 0.75, gridSize * 0.75);
+            break;
+    }
+
+    // Create the corresponding SVG element with opacity for export
+    createSVGShape(x, y, gridSize, color, shape, randomOpacity);
+}
+
+// Create SVG shapes based on the drawn shapes for export, including opacity
+function createSVGShape(x, y, gridSize, color, shape, opacity) {
+    const hexColor = `#${((1 << 24) + (color.r << 16) + (color.g << 8) + color.b).toString(16).slice(1)}`;
+    let svgElement;
+
+    switch (shape) {
+        case 'circle':
+            svgElement = `<circle cx="${x + gridSize / 2}" cy="${y + gridSize / 2}" r="${gridSize / 2}" fill="${hexColor}" fill-opacity="${opacity}" />`;
+            break;
+        case 'diamond':
+            svgElement = `<rect x="${x}" y="${y}" width="${gridSize}" height="${gridSize}" fill="${hexColor}" fill-opacity="${opacity}" transform="rotate(45 ${x + gridSize / 2} ${y + gridSize / 2})" />`;
+            break;
+        case 'verticalStripe':
+            const stripeHeight = Math.random() * 0.15 * gridSize + 0.05 * gridSize;
+            svgElement = `<rect x="${x + gridSize / 4}" y="${y}" width="${gridSize / 2}" height="${stripeHeight}" fill="${hexColor}" fill-opacity="${opacity}" />`;
+            break;
+        case 'horizontalStripe':
+            const stripeWidth = Math.random() * 0.15 * gridSize + 0.05 * gridSize;
+            svgElement = `<rect x="${x}" y="${y + gridSize / 4}" width="${stripeWidth}" height="${gridSize / 2}" fill="${hexColor}" fill-opacity="${opacity}" />`;
+            break;
+        default:
+            svgElement = `<rect x="${x}" y="${y}" width="${gridSize * 0.75}" height="${gridSize * 0.75}" fill="${hexColor}" fill-opacity="${opacity}" />`;
+            break;
+    }
+
+    svgElements.push(svgElement); // Store the SVG element for export
+}
+
+
+        function exportAsSVG() {
+            const width = 400, height = 400; // Same dimensions as the canvas
+            const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">`;
+            const svgFooter = `</svg>`;
+            const svgContent = svgElements.join('\n');
+            const svgData = `${svgHeader}\n${svgContent}\n${svgFooter}`;
+
+            // Create a blob from the SVG data and trigger download
+            const blob = new Blob([svgData], { type: 'image/svg+xml' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'generated_image.svg';
+            link.click();
+        }
+
+        // Convert hex color to RGB
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            return {
+                r: (bigint >> 16) & 255,
+                g: (bigint >> 8) & 255,
+                b: bigint & 255
+            };
+        }
+
+        // Control density based on luminosity: more in darker areas
+        function getDensityFromLuminosity(luminosity) {
+            if (luminosity < 60) return 0.9; // Highest density in darkest areas
+            if (luminosity < 100) return 0.7;
+            if (luminosity < 150) return 0.3;
+            return 0.02; // Lowest density in lighter areas
+        }
+    </script>
+</body>
+</html>

@@ -36,6 +36,7 @@
       padding: 15px;
       border-radius: 5px;
       margin: 20px;
+      background-color: hsla(46,6%,92%,0.8);
     }
 
     /* =======================
@@ -46,6 +47,7 @@
       padding: 15px;
       border-radius: 5px;
       margin: 20px;
+      background-color: hsla(46,6%,92%,0.8);
     }
 
     /* Two-column layout for single-video mode */
@@ -53,6 +55,7 @@
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      background-color: hsla(46,6%,92%,0.8);
     }
     .single-video-col, .single-tools-col {
       flex: 1;
@@ -73,6 +76,7 @@
       padding: 15px;
       border-radius: 5px;
       margin: 20px;
+      background-color: hsla(46,6%,92%,0.8);
     }
 
     /* Each block container */
@@ -107,6 +111,7 @@
       justify-content: space-between;
       align-items: center;
       margin: 8px;
+      padding-right: 12px;
     }
 
     /* Collapsible content inside the block */
@@ -121,7 +126,7 @@
     }
     .video-col video {
       width: 100%;
-      max-height: 240px;
+      max-height: 380px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
@@ -159,6 +164,7 @@
       padding: 15px;
       border-radius: 5px;
       margin: 20px;
+      background-color: hsla(46,6%,92%,0.8);
     }
 
     .advanced-requests-header {
@@ -189,8 +195,7 @@
     input[type="file"],
     input[type="text"],
     textarea, select {
-      width: 100%
-      box-sizing: border-box;
+      width: 100%;
       margin: 5px;
       padding: 5px;
     }
@@ -273,7 +278,6 @@
       <label for="singleFileInput">Upload Video:</label>
       <input type="file" id="singleFileInput" accept="video/*">
       <br>
-      <br>
       <video id="singleVideoPlayer" controls></video>
     </div>
 
@@ -326,23 +330,23 @@
       </label>
       <div id="globalVolumeDetails" class="subsection hidden">
         <label for="volumeRangeStart">Timestamp Start (optional):</label>
-        <input type="text" id="volumeRangeStart" placeholder="e.g. 00:01:23">
+        <input type="text" id="volumeRangeStart" placeholder="e.g. 00:01:23"><br>
         
         <label for="volumeRangeEnd">Timestamp End (optional):</label>
-        <input type="text" id="volumeRangeEnd" placeholder="e.g. 00:02:10">
+        <input type="text" id="volumeRangeEnd" placeholder="e.g. 00:02:10"><br>
 
         <label for="volumeDirection">Volume Change:</label>
         <select id="volumeDirection">
           <option value="increase">Increase</option>
           <option value="decrease">Decrease</option>
-        </select>
+        </select><br>
 
         <label for="volumeNotes">Notes (optional):</label>
         <textarea id="volumeNotes" rows="2" placeholder="e.g. Make it 20% louder..."></textarea>
       </div>
     </div>
 
-    <hr>
+    <br>
 
     <div>
       <label>
@@ -351,20 +355,20 @@
       </label>
       <div id="globalSpeedDetails" class="subsection hidden">
         <label for="speedRangeStart">Timestamp Start (optional):</label>
-        <input type="text" id="speedRangeStart" placeholder="e.g. 00:03:00">
+        <input type="text" id="speedRangeStart" placeholder="e.g. 00:03:00"><br>
         
         <label for="speedRangeEnd">Timestamp End (optional):</label>
-        <input type="text" id="speedRangeEnd" placeholder="e.g. 00:04:30">
+        <input type="text" id="speedRangeEnd" placeholder="e.g. 00:04:30"><br>
 
         <label for="speedValue">Playback Speed (e.g. 1.25):</label>
-        <input type="text" id="speedValue" placeholder="e.g. 1.25">
+        <input type="text" id="speedValue" placeholder="e.g. 1.25"><br>
 
         <label for="speedNotes">Notes (optional):</label>
         <textarea id="speedNotes" rows="2" placeholder="e.g. Speed up the demonstration..."></textarea>
       </div>
     </div>
 
-    <hr>
+    <br>
 
     <div>
       <label>
@@ -376,14 +380,14 @@
         <input type="file" id="musicFileInput" accept="audio/*">
         <br><br>
         <label for="musicLink">Or Provide Music Link (optional):</label>
-        <textarea id="musicLink" rows="2" placeholder="Paste audio link here..."></textarea>
+        <textarea id="musicLink" rows="2" placeholder="Paste audio link here..."></textarea><br>
 
         <label for="musicNotes">Notes (optional):</label>
         <textarea id="musicNotes" rows="2" placeholder="Use only during intro, keep volume low..."></textarea>
       </div>
     </div>
 
-    <hr>
+    <br>
 
     <div>
       <label>

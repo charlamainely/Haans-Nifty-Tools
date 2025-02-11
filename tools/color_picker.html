@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Picker Generator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    input[type="color"] {
+        width: 40px;
+        height: 40px;
+    }
+    .arrow {
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <h1>Color Picker Generator</h1>
+    <div id="colorList">
+        <input type="color" value="#ff0000">
+        <span class="arrow" onclick="moveColorUp(0)">▲</span>
+        <span class="arrow" onclick="moveColorDown(0)">▼</span>
+        <input type="checkbox" id="lockColor0" onchange="toggleLockColor(0)">
+        <label for="lockColor0">Lock Color</label><br>
+
+        <input type="color" value="#00ff00">
+        <span class="arrow" onclick="moveColorUp(1)">▲</span>
+        <span class="arrow" onclick="moveColorDown(1)">▼</span>
+        <input type="checkbox" id="lockColor1" onchange="toggleLockColor(1)">
+        <label for="lockColor1">Lock Color</label><br>
+
+        <input type="color" value="#0000ff">
+        <span class="arrow" onclick="moveColorUp(2)">▲</span>
+        <span class="arrow" onclick="moveColorDown(2)">▼</span>
+        <input type="checkbox" id="lockColor2" onchange="toggleLockColor(2)">
+        <label for="lockColor2">Lock Color</label><br>
+
+        <input type="color" value="#ffff00">
+        <span class="arrow" onclick="moveColorUp(3)">▲</span>
+        <span class="arrow" onclick="moveColorDown(3)">▼</span>
+        <input type="checkbox" id="lockColor3" onchange="toggleLockColor(3)">
+        <label for="lockColor3">Lock Color</label>
+    </div>
+    <button onclick="randomizeColors()">Randomize Colors</button>
+    <p id="colorText"></p>
+
+    <script>
+        const colors = document.querySelectorAll('#colorList input[type="color"]');
+        const lockCheckboxes = document.querySelectorAll('#colorList input[type="checkbox"]');
+
+        function moveColorUp(index) {
+            if (index > 0) {
+                const temp = colors[index].value;
+                colors[index].value = colors[index - 1].value;
+                colors[index - 1].value = temp;
+                generateColors();
+            }
+        }
+
+        function moveColorDown(index) {
+            if (index < colors.length - 1) {
+                const temp = colors[index].value;
+                colors[index].value = colors[index + 1].value;
+                colors[index + 1].value = temp;
+                generateColors();
+            }
+        }
+
+        function toggleLockColor(index) {
+            colors[index].disabled = lockCheckboxes[index].checked;
+        }
+
+        function randomizeColors() {
+            colors.forEach((input, index) => {
+                if (!lockCheckboxes[index].checked) {
+                    input.value = getRandomColor();
+                }
+            });
+            generateColors();
+        }
+
+        function generateColors() {
+            const colorsText = Array.from(colors).map(input => input.value).join(', ');
+            document.getElementById('colorText').textContent = colorsText;
+        }
+
+        function getRandomColor() {
+            return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        }
+    </script>
+</body>
+</html>
