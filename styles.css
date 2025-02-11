@@ -1,0 +1,299 @@
+/* Reset / Basic */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.tsukimi-rounded-regular {
+  font-family: "Tsukimi Rounded", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.tsukimi-rounded-bold {
+  font-family: "Tsukimi Rounded", serif;
+  font-weight: 700;
+  font-style: bold;
+}
+
+
+.plus-jakarta-sans-<uniquifier> {
+  font-family: "Plus Jakarta Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", serif; /* Switch to a simpler sans-serif font */
+  color: #333;                    /* Standard text color: dark gray */
+  line-height: 1.5;               /* Add breathing room between lines */
+  margin: 0;
+  padding: 0;
+  background-image: url("assets/bg-pattern.png");
+  background-repeat: repeat; /* This is the default, but let's be explicit */
+  background-position: top left; /* Starting position */
+  background-attachment: scroll; /* or fixed if you want a stationary pattern */
+}
+
+
+h1 {
+  font-family: "Tsukimi Rounded", serif;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: "Tsukimi Rounded", serif;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+p {
+  margin-bottom: 1rem;           /* Space after paragraphs */
+}
+
+/* Header & Navigation */
+header {
+  background-color: #4D84FF;
+  padding: 1rem;
+  color: #fff;
+}
+
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Main Content */
+main {
+  margin: 2rem;
+}
+
+/* Footer */
+footer {
+  background-color: #7CD6CA;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mt-2 {
+  margin-top: 2rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.gallery {
+  display: grid;
+  /* Creates a responsive grid: each column is minimum 200px, but can expand */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 2rem; /* Space between squares */
+  margin: 2rem 0; /* Some spacing around the gallery */
+}
+
+/* Each item is a square with a nice background, clickable, etc. */
+.gallery-item {
+  /* aspect-ratio ensures a perfect square in modern browsers */
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  /*text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);*/
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10px;
+  transition: transform 0.2s ease, filter 0.3s ease;
+  overflow: hidden;
+  border-radius: 25px;
+}
+
+/* Hover effect - slight zoom */
+.gallery-item:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+/* Hide the label (tool name) when hovering */
+.gallery-item:hover span {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* DESCRIPTION OVERLAY (Hidden by default) */
+.gallery-item::after {
+  content: attr(data-description); /* Pulls the description from HTML */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0; /* Hidden initially */
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Show description on hover */
+.gallery-item:hover::after {
+  opacity: 1;
+}
+/* Optional: style the icons or images inside the squares */
+.gallery-item img {
+  width: 50px;  /* Set an appropriate size for your icons */
+  height: 50px; /* Keep it square, or auto if the ratio differs */
+}
+
+/* Optional: style the text label */
+.gallery-item span {
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 10px;
+  text-align: center;
+  font-family: "Tsukimi Rounded", serif;
+  font-weight: 700;
+}
+/***************************************************
+  BASIC NAVBAR STYLES
+****************************************************/
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Logo on the left, menu on the right */
+  background-color: #4D84FF;        /* Navbar background */
+  padding: 0.5rem 1rem;
+}
+
+.logo {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/***************************************************
+  DEFAULT DESKTOP MENU
+****************************************************/
+.nav-menu {
+  list-style: none;
+  display: flex;     /* Horizontal menu by default on desktop */
+  gap: 1rem;         /* Space between items */
+  margin: 0;         /* Remove default ul margin */
+}
+
+.nav-menu li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+
+}
+
+.nav-menu li a:hover {
+  color: #ddd; /* Slightly lighter gray on hover */
+}
+
+/***************************************************
+  HIDING THE CHECKBOX & LABEL BY DEFAULT
+****************************************************/
+.nav-toggle {
+  display: none; /* Hide the checkbox in desktop view */
+}
+.nav-toggle-label {
+  display: none; /* Hide the hamburger icon in desktop view */
+}
+
+/***************************************************
+  MOBILE RESPONSIVE STYLES
+****************************************************/
+@media (max-width: 768px) {
+  /* 
+    When on mobile (<= 768px wide):
+    1) Show the hamburger icon
+    2) Hide the normal horizontal menu
+  */
+
+  .nav-toggle-label {
+    display: block;         /* Show hamburger button */
+    cursor: pointer;        /* Make it clickable */
+  }
+
+  /* Hamburger icon lines */
+  .nav-toggle-label span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px;
+    background-color: #4D84FF;
+    transition: 0.3s;
+  }
+
+  /* Turn our menu into a vertical panel that slides in from the right */
+  .nav-menu {
+    position: absolute;     /* Position it above the page */
+    top: 60px;              /* Just below the navbar */
+    right: 0;
+    background-color: #4D84FF; /* Same background as navbar */
+    flex-direction: column; /* Stack items vertically */
+    width: 200px;           /* Panel width */
+    padding: 1rem;
+    gap: 1rem;              /* Space between menu items */
+    transform: translateX(100%); /* Hide offscreen to the right by default */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* 
+    The "checkbox hack":
+    When nav-toggle is checked, the adjacent label + .nav-menu 
+    is pulled in (transform: translateX(0)).
+  */
+  .nav-toggle:checked + .nav-toggle-label + .nav-menu {
+    transform: translateX(0); /* Slide into view */
+  }
+
+}
+@media (max-width: 500px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller squares */
+  }
+}

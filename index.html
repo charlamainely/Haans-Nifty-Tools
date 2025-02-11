@@ -1,31 +1,84 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Tools Website</title>
-    <link rel="stylesheet" href="assets/styles.css">
+  <meta charset="UTF-8" />
+  <title>Haaan's Nifty Gadgets</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <main>
-        <!-- Content for your homepage -->
-        <h1>Welcome to My Tools Website</h1>
-        <p>Choose a tool from the menu above to get started.</p>
-    </main>
+  <header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
 
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="tools/data_sorter.html">Data Sorter</a></li>
-                <li><a href="tools/image_scaler.html">Image Scaler</a></li>
-                <li><a href="tools/video_editor.html">Video Editor</a></li>
-                <li><a href="tools/food_generator.html">What To Eat?</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
 
-    <footer>
-        <p>© 2025 My Tools Website</p>
-    </footer>
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
+
+  <main>
+    <h1>Welcome To Haaan's Lab!</h1>
+    <p>Choose a tool from the menu below to get started.</p>
+
+    <!-- GALLERY SECTION -->
+    <h2>Tools For TST</h2>
+    <div class="gallery">
+    <a class="gallery-item" href="tools/data_sorter.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="This tool helps you convert files easily.">
+    <span>Data Sorter</span>
+    </a>
+     <a class="gallery-item" href="tools/image_scaler.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="A simple calculator for quick math operations.">
+    <span>Image Scaler</span>
+    </a>
+    <a class="gallery-item" href="tools/video_editor.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="Analyze your data with charts and graphs.">
+    <span>Video Editor</span>
+    </a>
+      <!-- Add more squares as you create more tools -->
+    </div>
+
+    <h2>Miscellaneous Tools</h2>
+    <div class="gallery">
+      <a class="gallery-item" href="tools/food_generator.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="This tool helps you convert files easily.">
+        <span>What's For Dinner?</span>
+      </a>
+      <a class="gallery-item" href="tools/food_generator.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="This tool helps you convert files easily.">
+        <span>Cool Pattern Generator</span>
+      </a>
+      <a class="gallery-item" href="tools/food_generator.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="This tool helps you convert files easily.">
+        <span>Pixel Video Maker</span>
+      </a>
+      <a class="gallery-item" href="tools/food_generator.html" style="background-image: url('assets/tool1-bg.jpg');" data-description="This tool helps you convert files easily.">
+        <span>Color Randomizer</span>
+      </a>
+
+      <!-- Add more squares as you create more tools -->
+    </div>
+    <!-- END GALLERY SECTION -->
+
+  </main>
+
+  <footer>
+    <p>© 2025 Haaan's Nifty Gadgets Website</p>
+  </footer>
 </body>
 </html>
