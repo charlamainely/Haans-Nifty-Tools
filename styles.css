@@ -160,6 +160,8 @@ footer {
 .gallery-item::after {
   content: attr(data-description); /* Pulls the description from HTML */
   position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
@@ -167,7 +169,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 1.5 rem;
   text-align: center;
   padding: 0rem;
   opacity: 0; /* Hidden initially */
