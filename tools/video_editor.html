@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Editing Tool - Edit/Remove + Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 1200px;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    /* =======================
+       MODE SELECTION
+    ======================= */
+    .mode-select {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    /* =======================
+       SINGLE VIDEO SECTION
+    ======================= */
+    .single-video-section {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    /* Two-column layout for single-video mode */
+    .single-editor-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .single-video-col, .single-tools-col {
+      flex: 1;
+    }
+    .single-video-col video {
+      width: 100%;
+      max-height: 380px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* =======================
+       MULTIPLE VIDEOS SECTION
+    ======================= */
+    .multiple-videos-section {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    /* Each block container */
+    .video-block {
+      border: 1px dashed #999;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      position: relative;
+    }
+    .video-block.dragging {
+      opacity: 0.5;
+      border-color: #666;
+    }
+
+    /* DRAG HANDLE */
+    .drag-handle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 14px;
+      cursor: grab;
+      background: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 2px 5px;
+    }
+
+    /* HEADER ROW for each block (title + collapse button) */
+    .block-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* Collapsible content inside the block */
+    .block-content {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .video-col, .controls-col {
+      flex: 1;
+    }
+    .video-col video {
+      width: 100%;
+      max-height: 240px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* Hide via collapse */
+    .collapsed {
+      display: none !important;
+    }
+
+    /* =======================
+       REQUESTS PANEL
+    ======================= */
+    .requestsPanel h3, .requestsPanel h4 {
+      margin-top: 10px;
+    }
+
+    .requestsPanel ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .requestsPanel li {
+      margin: 5px 0;
+    }
+
+    .requestsPanel button {
+      margin-left: 8px;
+    }
+
+    /* =======================
+       GLOBAL ADVANCED REQUESTS
+    ======================= */
+    .advanced-requests {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .advanced-requests-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* We'll just collapse the main content area within advanced requests */
+    .advanced-requests-content.collapsed {
+      display: none;
+    }
+
+    .subsection {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px dashed #999;
+      border-radius: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* =======================
+       GENERAL STYLING
+    ======================= */
+    input[type="file"],
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 5px;
+      padding: 5px;
+    }
+
+    button {
+      margin-right: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    #exportOutput {
+      width: 100%;
+      height: 200px;
+    }
+
+    /* =======================
+       RESPONSIVE
+    ======================= */
+    @media (max-width: 900px) {
+      .single-editor-container {
+        flex-direction: column;
+      }
+      .block-content {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Video Editing Request Tool</h1>
+
+<!-- (A) SELECT MODE: SINGLE VS MULTIPLE -->
+<div class="mode-select">
+  <h2>Project Type</h2>
+  <label>
+    <input type="radio" name="projectMode" value="single" checked>
+    Single Video
+  </label>
+  <label>
+    <input type="radio" name="projectMode" value="multiple">
+    Multiple Videos (Combine & Reorder)
+  </label>
+</div>
+
+<!-- (B) SINGLE VIDEO SECTION -->
+<div class="single-video-section">
+  <h2>Single Video Editor</h2>
+
+  <!-- Two-column container for Single Mode -->
+  <div class="single-editor-container">
+    <!-- LEFT COLUMN: Video Upload + Video Player -->
+    <div class="single-video-col">
+      <label for="singleFileInput">Upload Video:</label>
+      <input type="file" id="singleFileInput" accept="video/*">
+      <br>
+      <video id="singleVideoPlayer" controls></video>
+    </div>
+
+    <!-- RIGHT COLUMN: Editing Buttons + Requests -->
+    <div class="single-tools-col">
+      <button id="singleAddOverlayBtn" disabled>Add Text Overlay</button>
+      <button id="singleStartCutBtn" disabled>Mark Start of Cut</button>
+      <button id="singleEndCutBtn" disabled>Mark End of Cut</button>
+      <button id="singleAddNoteBtn" disabled>Add Note</button>
+
+      <div class="requestsPanel">
+        <h3>Text Overlays</h3>
+        <ul id="singleOverlayList"></ul>
+        <h3>Trimming Requests</h3>
+        <ul id="singleCutList"></ul>
+        <h3>Notes</h3>
+        <ul id="singleNoteList"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- (C) MULTIPLE VIDEOS SECTION -->
+<div class="multiple-videos-section">
+  <h2>Combine & Reorder Multiple Videos</h2>
+  <p>Click "Add Another Video" to create a new video block. Drag and drop blocks to reorder them.</p>
+  
+  <button id="addVideoBlockBtn">Add Another Video</button>
+  <div id="videosContainer" style="min-height:50px; border:1px solid #bbb; padding:10px; border-radius:5px;">
+    <!-- Dynamically added video blocks go here -->
+  </div>
+</div>
+
+<!-- (D) GLOBAL ADVANCED REQUESTS -->
+<div class="advanced-requests" id="globalRequestsSection">
+  <div class="advanced-requests-header">
+    <h2>Global Advanced Requests</h2>
+    <!-- Collapse/Expand Button -->
+    <button id="toggleGlobalRequestsBtn">Minimize</button>
+  </div>
+
+  <!-- We'll toggle this entire content area -->
+  <div class="advanced-requests-content" id="globalRequestsContent">
+    <p>Check any that apply to the entire project.</p>
+
+    <div>
+      <label>
+        <input type="checkbox" id="globalVolumeCheckbox">
+        Adjust Volume
+      </label>
+      <div id="globalVolumeDetails" class="subsection hidden">
+        <label for="volumeRangeStart">Timestamp Start (optional):</label>
+        <input type="text" id="volumeRangeStart" placeholder="e.g. 00:01:23">
+        
+        <label for="volumeRangeEnd">Timestamp End (optional):</label>
+        <input type="text" id="volumeRangeEnd" placeholder="e.g. 00:02:10">
+
+        <label for="volumeDirection">Volume Change:</label>
+        <select id="volumeDirection">
+          <option value="increase">Increase</option>
+          <option value="decrease">Decrease</option>
+        </select>
+
+        <label for="volumeNotes">Notes (optional):</label>
+        <textarea id="volumeNotes" rows="2" placeholder="e.g. Make it 20% louder..."></textarea>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <label>
+        <input type="checkbox" id="globalSpeedCheckbox">
+        Adjust Speed
+      </label>
+      <div id="globalSpeedDetails" class="subsection hidden">
+        <label for="speedRangeStart">Timestamp Start (optional):</label>
+        <input type="text" id="speedRangeStart" placeholder="e.g. 00:03:00">
+        
+        <label for="speedRangeEnd">Timestamp End (optional):</label>
+        <input type="text" id="speedRangeEnd" placeholder="e.g. 00:04:30">
+
+        <label for="speedValue">Playback Speed (e.g. 1.25):</label>
+        <input type="text" id="speedValue" placeholder="e.g. 1.25">
+
+        <label for="speedNotes">Notes (optional):</label>
+        <textarea id="speedNotes" rows="2" placeholder="e.g. Speed up the demonstration..."></textarea>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <label>
+        <input type="checkbox" id="globalMusicCheckbox">
+        Add Background Music
+      </label>
+      <div id="globalMusicDetails" class="subsection hidden">
+        <label for="musicFileInput">Upload Music File (optional):</label>
+        <input type="file" id="musicFileInput" accept="audio/*">
+        <br><br>
+        <label for="musicLink">Or Provide Music Link (optional):</label>
+        <textarea id="musicLink" rows="2" placeholder="Paste audio link here..."></textarea>
+
+        <label for="musicNotes">Notes (optional):</label>
+        <textarea id="musicNotes" rows="2" placeholder="Use only during intro, keep volume low..."></textarea>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <label>
+        <input type="checkbox" id="globalGraphicsCheckbox">
+        Additional Text/Graphics
+      </label>
+      <div id="globalGraphicsDetails" class="subsection hidden">
+        <label for="graphicsNotes">Describe your request:</label>
+        <textarea id="graphicsNotes" rows="3" placeholder="E.g. Add a logo in the corner, bullet points, etc."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- (E) EXPORT + COPY -->
+<button id="exportBtn">Export Requests</button>
+<button id="copyBtn">Copy Summary</button>
+<br><br>
+<label for="exportOutput">Copy/Paste Summary:</label><br>
+<textarea id="exportOutput" readonly></textarea>
+
+<script>
+/*
+  =======================================================
+  1) MODE: SINGLE vs MULTIPLE
+  =======================================================
+*/
+const modeRadios = document.getElementsByName('projectMode');
+
+// Single
+const singleVideoSection = document.querySelector('.single-video-section');
+const singleFileInput    = document.getElementById('singleFileInput');
+const singleVideoPlayer  = document.getElementById('singleVideoPlayer');
+const singleAddOverlayBtn= document.getElementById('singleAddOverlayBtn');
+const singleStartCutBtn  = document.getElementById('singleStartCutBtn');
+const singleEndCutBtn    = document.getElementById('singleEndCutBtn');
+const singleAddNoteBtn   = document.getElementById('singleAddNoteBtn');
+
+const singleOverlayList  = document.getElementById('singleOverlayList');
+const singleCutList      = document.getElementById('singleCutList');
+const singleNoteList     = document.getElementById('singleNoteList');
+
+// Multiple
+const multipleVideosSection = document.querySelector('.multiple-videos-section');
+const addVideoBlockBtn     = document.getElementById('addVideoBlockBtn');
+const videosContainer       = document.getElementById('videosContainer');
+
+// Global Advanced Requests
+const globalRequestsSection  = document.getElementById('globalRequestsSection');
+const globalRequestsContent  = document.getElementById('globalRequestsContent');
+const toggleGlobalRequestsBtn= document.getElementById('toggleGlobalRequestsBtn');
+
+const globalVolumeCheckbox   = document.getElementById('globalVolumeCheckbox');
+const globalSpeedCheckbox    = document.getElementById('globalSpeedCheckbox');
+const globalMusicCheckbox    = document.getElementById('globalMusicCheckbox');
+const globalGraphicsCheckbox = document.getElementById('globalGraphicsCheckbox');
+
+// Detail sections
+const globalVolumeDetails   = document.getElementById('globalVolumeDetails');
+const globalSpeedDetails    = document.getElementById('globalSpeedDetails');
+const globalMusicDetails    = document.getElementById('globalMusicDetails');
+const globalGraphicsDetails = document.getElementById('globalGraphicsDetails');
+
+// Volume fields
+const volumeRangeStart = document.getElementById('volumeRangeStart');
+const volumeRangeEnd   = document.getElementById('volumeRangeEnd');
+const volumeDirection  = document.getElementById('volumeDirection');
+const volumeNotes      = document.getElementById('volumeNotes');
+
+// Speed fields
+const speedRangeStart  = document.getElementById('speedRangeStart');
+const speedRangeEnd    = document.getElementById('speedRangeEnd');
+const speedValue       = document.getElementById('speedValue');
+const speedNotes       = document.getElementById('speedNotes');
+
+// Music fields
+const musicFileInput = document.getElementById('musicFileInput');
+const musicLink      = document.getElementById('musicLink');
+const musicNotes     = document.getElementById('musicNotes');
+
+// Graphics
+const graphicsNotes  = document.getElementById('graphicsNotes');
+
+// Export & Copy
+const exportBtn    = document.getElementById('exportBtn');
+const copyBtn      = document.getElementById('copyBtn');
+const exportOutput = document.getElementById('exportOutput');
+
+// SINGLE VIDEO DATA
+let singleData = {
+  textOverlays: [],
+  cuts: [],
+  notes: []
+};
+let singleCutStartTime = null;
+
+// MULTIPLE VIDEO DATA
+// Each block = { id, fileName: "", textOverlays:[], cuts:[], notes:[], cutStartTime: null, DOMrefs:{} }
+let multiData = [];
+let nextBlockId = 1; // increment for each new block
+
+// Toggle sections based on mode
+modeRadios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    if (radio.checked && radio.value === 'single') {
+      singleVideoSection.style.display    = 'block';
+      multipleVideosSection.style.display = 'none';
+    } else if (radio.checked && radio.value === 'multiple') {
+      singleVideoSection.style.display    = 'none';
+      multipleVideosSection.style.display = 'block';
+    }
+  });
+});
+
+/*
+  =======================================================
+  2) SINGLE VIDEO MODE
+  =======================================================
+*/
+singleFileInput.addEventListener('change', () => {
+  const file = singleFileInput.files[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    singleVideoPlayer.src = url;
+    singleVideoPlayer.load();
+
+    singleAddOverlayBtn.disabled = false;
+    singleStartCutBtn.disabled   = false;
+    singleEndCutBtn.disabled     = false;
+    singleAddNoteBtn.disabled    = false;
+  }
+});
+
+// Add Overlay
+singleAddOverlayBtn.addEventListener('click', () => {
+  const currentTime = singleVideoPlayer.currentTime;
+  const formatted   = formatTime(currentTime);
+  const text = prompt(`Enter overlay text at ${formatted}:`, "");
+  if (text && text.trim() !== "") {
+    singleData.textOverlays.push({ time: formatted, text: text });
+    renderSingleRequests();
+  }
+});
+
+// Start/End Cut
+singleStartCutBtn.addEventListener('click', () => {
+  singleCutStartTime = singleVideoPlayer.currentTime;
+  alert(`Cut start set at ${formatTime(singleCutStartTime)}. Click "Mark End of Cut" when ready.`);
+});
+
+singleEndCutBtn.addEventListener('click', () => {
+  if (singleCutStartTime === null) {
+    alert("Please set a start cut time first.");
+    return;
+  }
+  const endTime = singleVideoPlayer.currentTime;
+  const startFmt = formatTime(singleCutStartTime);
+  const endFmt   = formatTime(endTime);
+  const reason   = prompt("Reason/note for this cut (optional):", "");
+  singleData.cuts.push({ start: startFmt, end: endFmt, reason: reason || "" });
+  singleCutStartTime = null;
+  renderSingleRequests();
+});
+
+// Add Note
+singleAddNoteBtn.addEventListener('click', () => {
+  const currentTime = singleVideoPlayer.currentTime;
+  const formatted   = formatTime(currentTime);
+  const note = prompt(`Enter a note at ${formatted}:`, "");
+  if (note && note.trim() !== "") {
+    singleData.notes.push({ time: formatted, note: note });
+    renderSingleRequests();
+  }
+});
+
+// Render single requests
+function renderSingleRequests() {
+  // Overlays
+  singleOverlayList.innerHTML = "";
+  singleData.textOverlays.forEach((o, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${o.time} - ${o.text}`;
+    
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newTime = prompt("Edit timestamp (HH:MM:SS):", o.time);
+      if (newTime === null) return;
+      const newText = prompt("Edit overlay text:", o.text);
+      if (newText === null) return;
+
+      o.time = newTime;
+      o.text = newText;
+      renderSingleRequests();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      singleData.textOverlays.splice(index, 1);
+      renderSingleRequests();
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    singleOverlayList.appendChild(li);
+  });
+
+  // Cuts
+  singleCutList.innerHTML = "";
+  singleData.cuts.forEach((c, index) => {
+    const li = document.createElement('li');
+    let txt = `From ${c.start} to ${c.end}`;
+    if (c.reason) {
+      txt += ` - ${c.reason}`;
+    }
+    li.textContent = txt;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newStart = prompt("Edit start time (HH:MM:SS):", c.start);
+      if (newStart === null) return;
+      const newEnd = prompt("Edit end time (HH:MM:SS):", c.end);
+      if (newEnd === null) return;
+      const newReason = prompt("Edit reason/note (optional):", c.reason);
+      if (newReason === null) return;
+
+      c.start  = newStart;
+      c.end    = newEnd;
+      c.reason = newReason;
+      renderSingleRequests();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      singleData.cuts.splice(index, 1);
+      renderSingleRequests();
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    singleCutList.appendChild(li);
+  });
+
+  // Notes
+  singleNoteList.innerHTML = "";
+  singleData.notes.forEach((n, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${n.time} - ${n.note}`;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newTime = prompt("Edit timestamp (HH:MM:SS):", n.time);
+      if (newTime === null) return;
+      const newNote = prompt("Edit note text:", n.note);
+      if (newNote === null) return;
+
+      n.time = newTime;
+      n.note = newNote;
+      renderSingleRequests();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      singleData.notes.splice(index, 1);
+      renderSingleRequests();
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    singleNoteList.appendChild(li);
+  });
+}
+
+/*
+  =======================================================
+  3) MULTIPLE VIDEOS MODE
+  =======================================================
+*/
+addVideoBlockBtn.addEventListener('click', () => {
+  const block = createVideoBlock(nextBlockId);
+  nextBlockId++;
+  multiData.push(block);
+  renderMultiBlocks();
+});
+
+function createVideoBlock(blockId) {
+  return {
+    id: blockId,
+    fileName: "",       // updated when the user uploads a file
+    textOverlays: [],
+    cuts: [],
+    notes: [],
+    cutStartTime: null,
+    DOMrefs: {}
+  };
+}
+
+function renderMultiBlocks() {
+  videosContainer.innerHTML = "";
+
+  multiData.forEach((block, index) => {
+    const container = document.createElement('div');
+    container.className = 'video-block';
+    container.draggable = true;
+    container.dataset.blockId = block.id;
+
+    // Drag handle
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'drag-handle';
+    dragHandle.textContent = '☰';
+    container.appendChild(dragHandle);
+
+    // HEADER ROW with Title + Collapse Button
+    const headerRow = document.createElement('div');
+    headerRow.className = 'block-header-row';
+    container.appendChild(headerRow);
+
+    // "Video #N" title, possibly with filename
+    const blockTitle = document.createElement('h3');
+    // If a filename is known, show it; otherwise "No file yet"
+    const displayFilename = block.fileName ? ` - ${block.fileName}` : '';
+    blockTitle.textContent = `Video #${index + 1}${displayFilename}`;
+    headerRow.appendChild(blockTitle);
+
+    const collapseBtn = document.createElement('button');
+    collapseBtn.textContent = 'Collapse';
+    headerRow.appendChild(collapseBtn);
+
+    // Content area (video-col + controls-col)
+    const blockContent = document.createElement('div');
+    blockContent.className = 'block-content';
+    container.appendChild(blockContent);
+
+    // Video Column
+    const videoCol = document.createElement('div');
+    videoCol.className = 'video-col';
+    
+    const fileLabel = document.createElement('label');
+    fileLabel.textContent = `Upload Video ${index + 1}:`;
+    videoCol.appendChild(fileLabel);
+    videoCol.appendChild(document.createElement('br'));
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'video/*';
+    videoCol.appendChild(fileInput);
+
+    videoCol.appendChild(document.createElement('br'));
+
+    const video = document.createElement('video');
+    video.controls = true;
+    videoCol.appendChild(video);
+
+    // Controls Column
+    const controlsCol = document.createElement('div');
+    controlsCol.className = 'controls-col';
+
+    const addOverlayBtn = document.createElement('button');
+    addOverlayBtn.textContent = 'Add Text Overlay';
+    addOverlayBtn.disabled = !block.fileName;
+
+    const startCutBtn = document.createElement('button');
+    startCutBtn.textContent = 'Mark Start of Cut';
+    startCutBtn.disabled = !block.fileName;
+
+    const endCutBtn = document.createElement('button');
+    endCutBtn.textContent = 'Mark End of Cut';
+    endCutBtn.disabled = !block.fileName;
+
+    const addNoteBtn = document.createElement('button');
+    addNoteBtn.textContent = 'Add Note';
+    addNoteBtn.disabled = !block.fileName;
+
+    controlsCol.appendChild(addOverlayBtn);
+    controlsCol.appendChild(startCutBtn);
+    controlsCol.appendChild(endCutBtn);
+    controlsCol.appendChild(addNoteBtn);
+
+    // Requests Panel
+    const reqPanel = document.createElement('div');
+    reqPanel.className = 'requestsPanel';
+    const hOverlays = document.createElement('h4');
+    hOverlays.textContent = 'Text Overlays';
+    const overlayList = document.createElement('ul');
+
+    const hCuts = document.createElement('h4');
+    hCuts.textContent = 'Trimming Requests';
+    const cutList = document.createElement('ul');
+
+    const hNotes = document.createElement('h4');
+    hNotes.textContent = 'Notes';
+    const noteList = document.createElement('ul');
+
+    reqPanel.appendChild(hOverlays);
+    reqPanel.appendChild(overlayList);
+    reqPanel.appendChild(hCuts);
+    reqPanel.appendChild(cutList);
+    reqPanel.appendChild(hNotes);
+    reqPanel.appendChild(noteList);
+
+    controlsCol.appendChild(reqPanel);
+
+    // Put columns into blockContent
+    blockContent.appendChild(videoCol);
+    blockContent.appendChild(controlsCol);
+
+    // Collapse/Expand logic for the block
+    let isCollapsed = false;
+    collapseBtn.addEventListener('click', () => {
+      isCollapsed = !isCollapsed;
+      if (isCollapsed) {
+        blockContent.classList.add('collapsed');
+        collapseBtn.textContent = 'Expand';
+      } else {
+        blockContent.classList.remove('collapsed');
+        collapseBtn.textContent = 'Collapse';
+      }
+    });
+
+    // (1) File load
+    fileInput.addEventListener('change', () => {
+      const f = fileInput.files[0];
+      if (f) {
+        const url = URL.createObjectURL(f);
+        video.src = url;
+        video.load();
+        block.fileName = f.name;
+
+        // Update blockTitle to show the filename
+        blockTitle.textContent = `Video #${index + 1} - ${block.fileName}`;
+
+        // Enable overlay/cut/note buttons
+        addOverlayBtn.disabled = false;
+        startCutBtn.disabled   = false;
+        endCutBtn.disabled     = false;
+        addNoteBtn.disabled    = false;
+      }
+    });
+
+    // (2) Add Overlay
+    addOverlayBtn.addEventListener('click', () => {
+      const currTime = video.currentTime;
+      const fmt = formatTime(currTime);
+      const text = prompt(`Overlay text at ${fmt}:`, "");
+      if (text && text.trim() !== "") {
+        block.textOverlays.push({ time: fmt, text: text });
+        renderBlockRequests(block, overlayList, cutList, noteList, video);
+      }
+    });
+
+    // (3) Start/End Cut
+    startCutBtn.addEventListener('click', () => {
+      block.cutStartTime = video.currentTime;
+      alert(`Cut start set at ${formatTime(block.cutStartTime)}. Now click "Mark End of Cut".`);
+    });
+
+    endCutBtn.addEventListener('click', () => {
+      if (block.cutStartTime === null) {
+        alert("Please set a start cut time first.");
+        return;
+      }
+      const end = video.currentTime;
+      const startFmt = formatTime(block.cutStartTime);
+      const endFmt   = formatTime(end);
+      const reason   = prompt("Reason/note for this cut (optional):", "");
+      block.cuts.push({ start: startFmt, end: endFmt, reason: reason || "" });
+      block.cutStartTime = null;
+      renderBlockRequests(block, overlayList, cutList, noteList, video);
+    });
+
+    // (4) Add Note
+    addNoteBtn.addEventListener('click', () => {
+      const currTime = video.currentTime;
+      const fmt = formatTime(currTime);
+      const note = prompt(`Enter a note at ${fmt}:`, "");
+      if (note && note.trim() !== "") {
+        block.notes.push({ time: fmt, note: note });
+        renderBlockRequests(block, overlayList, cutList, noteList, video);
+      }
+    });
+
+    // Render existing data
+    renderBlockRequests(block, overlayList, cutList, noteList, video);
+
+    // DRAG & DROP events
+    container.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', block.id);
+      container.classList.add('dragging');
+    });
+    container.addEventListener('dragend', e => {
+      container.classList.remove('dragging');
+    });
+    container.addEventListener('dragover', e => {
+      e.preventDefault(); // allows drop
+      const draggingBlock = document.querySelector('.video-block.dragging');
+      if (draggingBlock) {
+        const bounding = container.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        if (offset > bounding.height / 2) {
+          videosContainer.insertBefore(draggingBlock, container.nextSibling);
+        } else {
+          videosContainer.insertBefore(draggingBlock, container);
+        }
+      }
+    });
+
+    videosContainer.appendChild(container);
+    block.DOMrefs.container = container;
+  });
+
+  // Reorder multiData array based on DOM order
+  setTimeout(() => {
+    const newOrder = [];
+    const blocks = videosContainer.querySelectorAll('.video-block');
+    blocks.forEach(bDiv => {
+      const bid = parseInt(bDiv.dataset.blockId, 10);
+      const found = multiData.find(x => x.id === bid);
+      if (found) newOrder.push(found);
+    });
+    multiData = newOrder;
+  }, 100);
+}
+
+function renderBlockRequests(block, overlayList, cutList, noteList, videoElement) {
+  // Overlays
+  overlayList.innerHTML = "";
+  block.textOverlays.forEach((o, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${o.time} - ${o.text}`;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newTime = prompt("Edit timestamp (HH:MM:SS):", o.time);
+      if (newTime === null) return;
+      const newText = prompt("Edit overlay text:", o.text);
+      if (newText === null) return;
+
+      o.time = newTime;
+      o.text = newText;
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      block.textOverlays.splice(index, 1);
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    overlayList.appendChild(li);
+  });
+
+  // Cuts
+  cutList.innerHTML = "";
+  block.cuts.forEach((c, index) => {
+    const li = document.createElement('li');
+    let txt = `From ${c.start} to ${c.end}`;
+    if (c.reason) {
+      txt += ` - ${c.reason}`;
+    }
+    li.textContent = txt;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newStart = prompt("Edit start time (HH:MM:SS):", c.start);
+      if (newStart === null) return;
+      const newEnd   = prompt("Edit end time (HH:MM:SS):", c.end);
+      if (newEnd === null) return;
+      const newReason= prompt("Edit reason/note (optional):", c.reason);
+      if (newReason === null) return;
+
+      c.start  = newStart;
+      c.end    = newEnd;
+      c.reason = newReason;
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      block.cuts.splice(index, 1);
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    cutList.appendChild(li);
+  });
+
+  // Notes
+  noteList.innerHTML = "";
+  block.notes.forEach((n, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${n.time} - ${n.note}`;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      const newTime = prompt("Edit timestamp (HH:MM:SS):", n.time);
+      if (newTime === null) return;
+      const newNote = prompt("Edit note:", n.note);
+      if (newNote === null) return;
+
+      n.time = newTime;
+      n.note = newNote;
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => {
+      block.notes.splice(index, 1);
+      renderBlockRequests(block, overlayList, cutList, noteList, videoElement);
+    });
+
+    li.appendChild(editBtn);
+    li.appendChild(delBtn);
+    noteList.appendChild(li);
+  });
+}
+
+/*
+  =======================================================
+  4) GLOBAL ADVANCED REQUESTS (CHECKBOXES + COLLAPSE)
+  =======================================================
+*/
+function toggleDetails(checkbox, detailDiv) {
+  checkbox.addEventListener('change', () => {
+    detailDiv.classList.toggle('hidden', !checkbox.checked);
+  });
+}
+toggleDetails(globalVolumeCheckbox, globalVolumeDetails);
+toggleDetails(globalSpeedCheckbox, globalSpeedDetails);
+toggleDetails(globalMusicCheckbox, globalMusicDetails);
+toggleDetails(globalGraphicsCheckbox, globalGraphicsDetails);
+
+/* Collapse/Expand the content of advanced requests (but keep the heading & button visible) */
+toggleGlobalRequestsBtn.addEventListener('click', () => {
+  globalRequestsContent.classList.toggle('collapsed');
+  if (globalRequestsContent.classList.contains('collapsed')) {
+    toggleGlobalRequestsBtn.textContent = 'Expand';
+  } else {
+    toggleGlobalRequestsBtn.textContent = 'Minimize';
+  }
+});
+
+/*
+  =======================================================
+  5) EXPORT + COPY
+  =======================================================
+*/
+exportBtn.addEventListener('click', () => {
+  exportOutput.value = generateSummary();
+});
+
+copyBtn.addEventListener('click', () => {
+  /* Copies the contents of exportOutput to the clipboard */
+  navigator.clipboard.writeText(exportOutput.value)
+    .then(() => {
+      alert("Summary copied to clipboard!");
+    })
+    .catch(err => {
+      alert("Failed to copy summary: " + err);
+    });
+});
+
+function generateSummary() {
+  // Determine mode
+  const mode = [...modeRadios].find(r => r.checked).value;
+
+  let result = "";
+
+  if (mode === 'single') {
+    result += "MODE: SINGLE VIDEO\n\n";
+
+    // Sort each category for chronological order
+    singleData.textOverlays.sort((a, b) => parseTime(a.time) - parseTime(b.time));
+    singleData.cuts.sort((a, b) => parseTime(a.start) - parseTime(b.start));
+    singleData.notes.sort((a, b) => parseTime(a.time) - parseTime(b.time));
+
+    // Overlays
+    result += "TEXT OVERLAYS\n-------------\n";
+    if (singleData.textOverlays.length === 0) {
+      result += "No text overlays.\n";
+    } else {
+      singleData.textOverlays.forEach(o => {
+        result += `${o.time} - ${o.text}\n`;
+      });
+    }
+    result += "\n";
+
+    // Cuts
+    result += "TRIMMING REQUESTS\n-----------------\n";
+    if (singleData.cuts.length === 0) {
+      result += "No trimming requests.\n";
+    } else {
+      singleData.cuts.forEach(c => {
+        result += `From ${c.start} to ${c.end}`;
+        if (c.reason) {
+          result += ` - ${c.reason}`;
+        }
+        result += "\n";
+      });
+    }
+    result += "\n";
+
+    // Notes
+    result += "NOTES\n-----\n";
+    if (singleData.notes.length === 0) {
+      result += "No notes.\n";
+    } else {
+      singleData.notes.forEach(n => {
+        result += `${n.time} - ${n.note}\n`;
+      });
+    }
+
+  } else {
+    // MODE: MULTIPLE
+    result += "MODE: MULTIPLE VIDEOS\n\n";
+    if (multiData.length === 0) {
+      result += "No videos added.\n";
+    } else {
+      multiData.forEach((block, index) => {
+        result += `VIDEO #${index + 1}`;
+        if (block.fileName) {
+          result += ` (File: ${block.fileName})`;
+        }
+        result += "\n-----------\n";
+
+        // Sort each category
+        block.textOverlays.sort((a, b) => parseTime(a.time) - parseTime(b.time));
+        block.cuts.sort((a, b) => parseTime(a.start) - parseTime(b.start));
+        block.notes.sort((a, b) => parseTime(a.time) - parseTime(b.time));
+
+        // Overlays
+        if (block.textOverlays.length === 0) {
+          result += "No text overlays.\n";
+        } else {
+          result += "Text Overlays:\n";
+          block.textOverlays.forEach(o => {
+            result += `  ${o.time} - ${o.text}\n`;
+          });
+        }
+
+        // Cuts
+        if (block.cuts.length === 0) {
+          result += "No trimming requests.\n";
+        } else {
+          result += "Trimming Requests:\n";
+          block.cuts.forEach(c => {
+            result += `  From ${c.start} to ${c.end}`;
+            if (c.reason) {
+              result += ` - ${c.reason}`;
+            }
+            result += "\n";
+          });
+        }
+
+        // Notes
+        if (block.notes.length === 0) {
+          result += "No notes.\n";
+        } else {
+          result += "Notes:\n";
+          block.notes.forEach(n => {
+            result += `  ${n.time} - ${n.note}\n`;
+          });
+        }
+
+        result += "\n";
+      });
+    }
+  }
+
+  // GLOBAL ADVANCED REQUESTS
+  result += "\nGLOBAL ADVANCED REQUESTS\n------------------------\n";
+  let anyGlobal = false;
+
+  // Adjust Volume
+  if (globalVolumeCheckbox.checked) {
+    anyGlobal = true;
+    result += "Adjust Volume:\n";
+    const start = volumeRangeStart.value.trim();
+    const end   = volumeRangeEnd.value.trim();
+    if (start || end) {
+      result += `  Time Range: ${start || "Start"} - ${end || "End"}\n`;
+    }
+    result += `  Change: ${volumeDirection.value}\n`;
+    if (volumeNotes.value.trim()) {
+      result += `  Notes: ${volumeNotes.value.trim()}\n`;
+    }
+    result += "\n";
+  }
+
+  // Adjust Speed
+  if (globalSpeedCheckbox.checked) {
+    anyGlobal = true;
+    result += "Adjust Speed:\n";
+    const sStart = speedRangeStart.value.trim();
+    const sEnd   = speedRangeEnd.value.trim();
+    if (sStart || sEnd) {
+      result += `  Time Range: ${sStart || "Start"} - ${sEnd || "End"}\n`;
+    }
+    result += `  Speed: ${speedValue.value.trim() || "N/A"}x\n`;
+    if (speedNotes.value.trim()) {
+      result += `  Notes: ${speedNotes.value.trim()}\n`;
+    }
+    result += "\n";
+  }
+
+  // Background Music
+  if (globalMusicCheckbox.checked) {
+    anyGlobal = true;
+    result += "Background Music:\n";
+    if (musicFileInput.files.length > 0) {
+      result += `  Music File: ${musicFileInput.files[0].name}\n`;
+    }
+    if (musicLink.value.trim()) {
+      result += `  Music Link: ${musicLink.value.trim()}\n`;
+    }
+    if (musicNotes.value.trim()) {
+      result += `  Notes: ${musicNotes.value.trim()}\n`;
+    }
+    result += "\n";
+  }
+
+  // Additional Text/Graphics
+  if (globalGraphicsCheckbox.checked) {
+    anyGlobal = true;
+    result += "Additional Text/Graphics:\n";
+    if (graphicsNotes.value.trim()) {
+      result += `  ${graphicsNotes.value.trim()}\n`;
+    }
+    result += "\n";
+  }
+
+  if (!anyGlobal) {
+    result += "No global requests.\n";
+  }
+
+  return result;
+}
+
+/*
+  ==============================================
+  HELPER: Format time (sec → HH:MM:SS)
+  ==============================================
+*/
+function formatTime(sec) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  return [
+    h.toString().padStart(2,'0'),
+    m.toString().padStart(2,'0'),
+    s.toString().padStart(2,'0')
+  ].join(':');
+}
+
+/*
+  ==============================================
+  HELPER: Parse time (HH:MM:SS → seconds)
+  ==============================================
+*/
+function parseTime(timeString) {
+  if (!timeString) return 0;
+  const parts = timeString.split(":").map(Number);
+  const hh = parts[0] || 0;
+  const mm = parts[1] || 0;
+  const ss = parts[2] || 0;
+  return hh * 3600 + mm * 60 + ss;
+}
+</script>
+</body>
+</html>

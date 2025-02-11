@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Food Options Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .options-list {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .options-list p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Random Food Options Generator</h1>
+
+        <!-- Category selection and input -->
+        <div class="category-section">
+            <label for="category">Choose a category:</label>
+            <select id="category">
+                <option value="snacks">Snacks</option>
+                <option value="mainCourse">Main Course</option>
+                <option value="desserts">Desserts</option>
+                <option value="all">All Categories</option>
+            </select>
+        </div>
+
+        <div class="category-section">
+            <label for="num-options">Choose number of food options to generate:</label>
+            <select id="num-options">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+
+        <!-- Button to generate options -->
+        <button onclick="generateOptions()">Generate Food Options</button>
+
+        <!-- Output display section -->
+        <div id="output" class="options-list"></div>
+    </div>
+
+    <script>
+        // Food categories
+        const snacks = [
+            "Potato Chips", "Pretzels", "Popcorn", "Cheese Sticks", "Mozzarella Sticks", 
+            "Nachos", "Granola Bars", "Trail Mix", "Peanuts", "Crackers", 
+            "Fruit Snacks", "Rice Cakes", "Beef Jerky", "Veggie Chips", "Dried Fruit", 
+            "Pita Chips", "Hummus and Veggies", "Mini Sandwiches", "Fruit Slices", "Yogurt Parfait", 
+            "Hột Vịt Lộn", "Cucumber Slices with Dip", "Apple Slices with Peanut Butter", "Smoothie", "Popsicles", "Mini Quesadillas", "Spring Rolls", "Egg Rolls", "Samosas", "Pizza Bites", "Chicken Wings",  "Cheese Popcorn", "Salted Almonds","Salted Peanuts","Chocolate-Covered Pretzels", "Baked Pita Chips", "Cheese and Crackers", "Granola with Yogurt", "Carrot Sticks with Dip", "Mini Pizzas", "Mini Tacos", "Chips and Salsa",  "Mini Pancakes", "Mini Waffles", "Guacamole and Chips", "Fruit Salad","Edamame", "Seaweed Salad", "Gyoza", "Baozi", "Onigiri", "Kimchi Pancakes", "Prawn Crackers", "Takoyaki", "Tempura Vegetables", "Taiwanese Popcorn Chicken", "Fish Cakes", "Yakitori", "Japchae", "Rice Crackers with Nori", "Bánh Mì Chả Cá", "Bánh Bèo", "Chả Giò", "Bánh Da Lợn", "Nem Chua", "Bánh Khoai Mì Nướng", "Gỏi Cuốn", "Bánh Đúc", "Trà Sữa"
+        ];
+
+        const mainCourse = [
+            "Spaghetti Bolognese", "Chicken Alfredo", "Beef Stir Fry", "Grilled Salmon", "Roast Chicken", 
+            "Beef Tacos", "Vegetable Stir Fry", "Chicken Parmesan", "Chicken and Rice", "Pork Chops", 
+            "Grilled Steak", "Lamb Curry", "Vegetable Lasagna", "Beef Wellington", "Fish and Chips", 
+            "Chicken Tikka Masala", "Pulled Pork Sandwiches", "BBQ Ribs", "Baked Ziti", "Risotto", 
+            "Lasagna", "Chicken Fajitas", "Vegetable Soup", "Ratatouille", "Beef Tacos", 
+            "Shrimp Scampi", "Eggplant Parmesan", "Beef Stir Fry", "Fish Tacos", "Bulgur Wheat Salad", 
+            "Curry Chicken", "Stuffed Peppers", "Peking Duck", "Bangers and Mash", "Beef Stroganoff", 
+            "Chicken Marsala", "Vegetable Samosas", "Moussaka", "Steak and Potatoes", "Pizza Margherita", 
+            "Baked Chicken Wings", "Fettuccine Alfredo", "Chicken Fried Rice", "Pasta Primavera", "Grilled Cheese Sandwich", 
+            "Pork Schnitzel", "Tofu Stir Fry", "Pulled Beef Tacos", "Cheeseburger", "Chicken Caesar Salad","Ramen", "Sukiyaki", "Bibimbap", "Mapo Tofu", "Char Siu", "Unagi Don", "Hot Pot", "Teriyaki Chicken", "Katsu Curry", "Shoyu Ramen", "Tonkatsu", "Beef Bulgogi", "Korean Fried Chicken", "Kung Pao Chicken", "Peking Duck", "Japchae", "Okonomiyaki", "Lo Mein", "Kimchi Stew", "Shanghai Fried Rice Cake","Phở", "Bánh Mì", "Cơm Tấm", "Bún Bò Huế", "Bánh Canh", "Mì Quảng", "Gà Nướng Sả", "Cá Kho Tộ", "Bánh Hỏi", "Chạo Tôm","Bún Chả", "Bánh Xèo", "Cơm Gà Hội An", "Lẩu Thái", "Bún Riêu", "Bò Lúc Lắc","Bún Mắm", "Bánh Xèo"
+        ];
+
+        const desserts = [
+            "Chocolate Cake", "Apple Pie", "Cheesecake", "Brownies", "Tiramisu", 
+            "Cupcakes", "Lemon Meringue Pie", "Carrot Cake", "Strawberry Shortcake", "Pavlova", 
+            "Rice Pudding", "Ice Cream", "Gelato", "Crème Brûlée", 
+            "Churros", "Fried Ice Cream", "Macarons", "Baklava", "Chocolate Mousse", 
+            "Pumpkin Pie", "Pecan Pie", "Molten Lava Cake", "Cinnamon Rolls", "Sugar Cookies", 
+            "Eclairs", "Fruit Tart", "Lemon Bars", "Peach Cobbler", "Lamington", 
+            "Chocolate Chip Cookies", "Fudge", "Panna Cotta", "Mango Sticky Rice", 
+            "Raspberry Sorbet", "Coconut Macaroons", "Madeleines", "Donuts", "Choco-Peanut Butter Cups", "Red Velvet Cake", "Marshmallow Treats", "Frozen Yogurt", "Raisin Bran Muffins", 
+            "Key Lime Pie",  "Frosted Cupcakes","Mochi", "Dorayaki", "Taiyaki", "Mango Sticky Rice", "Sesame Balls", "Matcha Ice Cream", "Custard Bun", "Egg Tart", "Melon Pan", "Red Bean Ice Cream", "Dango", "Black Sesame Pudding", "Taro Bubble Tea", "Sweet Rice Cakes", "Matcha Roll Cake", "Lychee Jelly", "Chè Ba Màu", "Chè Bưởi", "Bánh Chuối Nướng", "Bánh Pía", "Chè Thái", "Bánh Flan", "Chè Đậu Xanh", "Chè Trôi Nước", "Chè Hạt Sen", "Chè Nếp Cẩm", "Chè Cốm", "Chè Xôi Nếp", "Bánh Đậu Xanh", "Bánh Bò Nướng"
+        ];
+
+        // Function to generate selected number of random food options
+        function generateOptions() {
+            const category = document.getElementById('category').value;
+            const numOptions = parseInt(document.getElementById('num-options').value);
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ""; // Clear previous output
+
+            let selectedOptions = [];
+            if (category === "snacks") {
+                selectedOptions = snacks;
+            } else if (category === "mainCourse") {
+                selectedOptions = mainCourse;
+            } else if (category === "desserts") {
+                selectedOptions = desserts;
+            } else {
+                selectedOptions = [...snacks, ...mainCourse, ...desserts];
+            }
+
+            // Randomize the selected options
+            let shuffledOptions = [...selectedOptions];
+            shuffleArray(shuffledOptions); // Shuffle the array
+
+            // Display the first `numOptions` items from the shuffled list
+            for (let i = 0; i < numOptions; i++) {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = shuffledOptions[i];
+                outputDiv.appendChild(paragraph);
+            }
+        }
+
+        // Shuffle function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1)); // Get random index
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+    </script>
+</body>
+</html>

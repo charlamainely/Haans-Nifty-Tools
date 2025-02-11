@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Separator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    textarea {
+        width: 100%;
+        height: 200px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+    <h1>Data Separator</h1>
+    <textarea id="textData" placeholder="Enter data here..."></textarea>
+    
+    <h2>Separated Data</h2>
+    <button onclick="separateData()">Separate Data</button>
+    <button onclick="exportToExcel()">Export to Excel</button>
+    <table id="separatedTable"></table>
+    
+    
+    
+    <script>
+        let excelRows = [];
+        const countriesList = [
+            // Your existing country list here
+            { name: 'Australia', demonyms: ['Australian'] },
+            { name: 'Afghanistan', demonyms: ['Afghan'] },
+            { name: 'Bangladesh', demonyms: ['Bangladeshi'] },
+            { name: 'Bhutan', demonyms: ['Bhutanese'] },
+            { name: 'Brunei', demonyms: ['Bruneian'] },
+            { name: 'Cambodia', demonyms: ['Cambodian'] },
+            { name: 'China', demonyms: ['Chinese'] },
+            { name: 'Hong Kong', demonyms: ['Hong Kong'] },
+            { name: 'India', demonyms: ['Indian'] },
+            { name: 'Indonesia', demonyms: ['Indonesian'] },
+            { name: 'Japan', demonyms: ['Japanese'] },
+            { name: 'Lao PDR', demonyms: ['PDR'] },
+            { name: 'Kiribati', demonyms: ['I-Kiribati'] },
+            { name: 'Macau', demonyms: ['Macanese'] },
+            { name: 'Malaysia', demonyms: ['Malaysian'] },
+            { name: 'Maldives', demonyms: ['Maldivian'] },
+            { name: 'Myanmar', demonyms: ['Burmese'] },
+            { name: 'Mongolia', demonyms: ['Mongolian'] },
+            { name: 'Nepal', demonyms: ['Nepali'] },
+            { name: 'Netherlands', demonyms: ['Dutch'] },
+            { name: 'Pakistan', demonyms: ['Pakistani'] },
+            { name: 'Philippines', demonyms: ['Philippine'] },
+            { name: 'Samoa', demonyms: ['Samoan'] },
+            { name: 'Singapore', demonyms: ['Singaporean'] },
+            { name: 'South Korea', demonyms: ['Korean'] },
+            { name: 'Sri Lanka', demonyms: ['Lanka'] },
+            { name: 'Taiwan', demonyms: ['Taiwanese'] },
+            { name: 'Thailand', demonyms: ['Thai'] },
+            { name: 'Timor Leste', demonyms: ['Leste'] },
+            { name: 'Tonga', demonyms: ['Tongan'] },
+            { name: 'Vanuatu', demonyms: ['Ni-Vanuatu'] },
+            { name: 'Vietnam', demonyms: ['Vietnamese'] },
+            { name: 'UK', demonyms: ['British'] },
+            { name: 'UAE', demonyms: ['Emirati'] },
+        ];
+
+        function separateData() {
+    excelRows = [];
+    const textData = document.getElementById('textData').value;
+    const lines = textData.split('\n').map(line => line.trim());
+
+    let name = '';
+    let rank = '';
+    let jobTitle = '';
+    let placeOfWork = '';
+    let phoneNumbers = [];
+    let emails = [];
+
+    lines.forEach(line => {
+        if (line.includes('(') || line.includes(')')) {
+            return; // Skip lines containing parentheses
+        }
+
+        let cleanedLine = line.replace(/[^\w\s@.-]/g, '').trim();
+
+        if (cleanedLine.includes('@') && cleanedLine.includes('.') || cleanedLine.includes('Email')) {
+            emails.push(cleanedLine);
+        } else if (cleanedLine.match(/\d{3}[-\s]?\d{3}[-\s]?\d{4}/) || cleanedLine.includes('Fax') || cleanedLine.includes('Mobile') || cleanedLine.includes('Office Tel') || cleanedLine.includes('Tel')) {
+            if (!phoneNumbers.includes(cleanedLine)) {
+                phoneNumbers.push(cleanedLine);
+            }
+        } else if ((cleanedLine.toLowerCase().includes('colonel') || cleanedLine.toLowerCase().includes('general') || cleanedLine.toLowerCase().includes('detective') || cleanedLine.toLowerCase().includes('sergeant') || cleanedLine.toLowerCase().includes('inspector') || cleanedLine.toLowerCase().includes('superintendent') || cleanedLine.toLowerCase().includes('investigator') || cleanedLine.toLowerCase().includes('commander') || cleanedLine.toLowerCase().includes('captain') || cleanedLine.toLowerCase().includes('officer') || cleanedLine.toLowerCase().includes('lieutenant') || cleanedLine.toLowerCase().includes('deputy') || cleanedLine.toLowerCase().includes('major')) && rank === '') {
+            rank = cleanedLine;
+        } else if ((cleanedLine.toLowerCase().includes('director') || cleanedLine.toLowerCase().includes('officer') || cleanedLine.toLowerCase().includes('chief') || cleanedLine.toLowerCase().includes('manager') || cleanedLine.toLowerCase().includes('colonel') || cleanedLine.toLowerCase().includes('detective') || cleanedLine.toLowerCase().includes('sergeant') || cleanedLine.toLowerCase().includes('inspector') || cleanedLine.toLowerCase().includes('superintendent') || cleanedLine.toLowerCase().includes('investigator') || cleanedLine.toLowerCase().includes('commander') || cleanedLine.toLowerCase().includes('captain') || cleanedLine.toLowerCase().includes('head') || cleanedLine.toLowerCase().includes('dictorate') || cleanedLine.toLowerCase().includes('senior')) && jobTitle === '') {
+            jobTitle = cleanedLine;
+        } else {
+            if (name === '') {
+                name = cleanedLine;
+            } else {
+                if (!/\d/.test(cleanedLine)) { // Check if the line contains any number
+                    placeOfWork += line + ' ';
+                }
+            }
+        }
+    });
+
+    const country = generateCountryFromKeywords(placeOfWork) || generateCountryWithSpace(placeOfWork) || generateCountryFromKeywords(phoneNumbers) || generateCountryWithSpace(phoneNumbers);
+
+    excelRows.push([name.trim(), country, rank.trim(), jobTitle.trim(), placeOfWork.trim(), phoneNumbers, emails]);
+
+    console.log('Separated Data:', excelRows);
+
+    updateTable();
+}
+/*
+
+*/
+
+        function generateCountryFromKeywords(placeOfWork) {
+            const words = placeOfWork.split(/[ ,]+/).map(word => word.trim().toLowerCase());
+            
+            for (const countryObj of countriesList) {
+                if (words.includes(countryObj.name.toLowerCase())) {
+                    return countryObj.name;
+                }
+                
+                for (const demonym of countryObj.demonyms) {
+                    if (words.includes(demonym.toLowerCase())) {
+                        return countryObj.name;
+                    }
+                }
+            }
+            
+            return 'not found';
+        }
+
+        function generateCountryWithSpace(placeOfWork) {
+            const countriesWithSpaces = ['United States', 'United Kingdom', 'Sri Lanka', 'Timor Leste', 'Hong Kong'];
+            
+            for (const country of countriesWithSpaces) {
+                if (placeOfWork.includes(country)) {
+                    return country;
+                }
+            }
+            
+            for (const countryObj of countriesList) {
+                for (const demonym of countryObj.demonyms) {
+                    if (placeOfWork.toLowerCase().includes(demonym.toLowerCase())) {
+                        return countryObj.name;
+                    }
+                }
+            }
+            
+            return 'not found';
+        }
+
+        // Existing functions remain unchanged
+        /*
+        function updateTable() {
+            let tableContent = '';
+            
+            excelRows.forEach(row => {
+                tableContent += `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td><td>${escapeHtml(row[3])}</td><td>${escapeHtml(row[4])}</td><td>${row[5].map(phone => escapeHtml(phone)).join('<br>')}</td><td>${row[6].map(email => escapeHtml(email)).join('<br>')}</td></tr>`;
+            });
+            
+            document.getElementById('separatedTable').innerHTML = tableContent;
+        }
+
+        function exportToExcel() {
+            let wb = XLSX.utils.book_new();
+            let ws = XLSX.utils.table_to_sheet(document.getElementById('separatedTable'), { raw: true });
+
+            XLSX.utils.book_append_sheet(wb, ws, "Data");
+            XLSX.writeFile(wb, 'separated_data.xlsx');
+        }
+*/
+/*
+*/
+
+       function updateTable() {
+    let tableContent = document.getElementById('separatedTable').innerHTML;
+
+    excelRows.forEach(row => {
+        tableContent += `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${escapeHtml(row[2])}</td><td>${escapeHtml(row[3])}</td><td>${escapeHtml(row[4])}</td><td>${row[6].map(email => escapeHtml(email)).join('<br>')}</td><td>${row[5].map(phone => escapeHtml(phone)).join('<br>')}</td></tr>`;
+    });
+
+    document.getElementById('separatedTable').innerHTML = tableContent;
+}
+        function exportToExcel() {
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.table_to_sheet(document.getElementById('separatedTable'), { raw: true });
+
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, 'separated_data.xlsx');
+}
+
+        function escapeHtml(text) {
+            let escapedText = document.createElement('textarea');
+            escapedText.textContent = text;
+            return escapedText.value;
+        }
+    </script>
+</body>
+</html>

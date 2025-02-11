@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #resultCanvas {
+      border: 1px solid #000;
+      display: block;
+      margin-top: 10px;
+    }
+    #controls {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Image Resizer Tool</h2>
+  <div id="controls">
+    <label for="width">Width: </label>
+    <input type="text" id="width" placeholder="Enter max width" />
+    <label for="height">Height: </label>
+    <input type="text" id="height" placeholder="Enter max height" />
+    <button id="copyBtn">Copy Image</button>
+  </div>
+  <p>Paste an image directly from your clipboard by pressing <strong>Ctrl+V</strong></p>
+  <canvas id="resultCanvas"></canvas>
+
+  <script>
+    const widthInput = document.getElementById('width');
+    const heightInput = document.getElementById('height');
+    const canvas = document.getElementById('resultCanvas');
+    const context = canvas.getContext('2d');
+
+    let image = new Image();
+
+    // Paste image from clipboard
+    window.addEventListener('paste', (event) => {
+      const items = event.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith('image')) {
+          const blob = items[i].getAsFile();
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            image.src = e.target.result;
+            image.onload = () => {
+              resizeImage();  // Resize immediately after pasting the image
+            };
+          };
+          reader.readAsDataURL(blob);
+        }
+      }
+    });
+
+    // Trigger resize on width/height change
+    widthInput.addEventListener('input', resizeImage);
+    heightInput.addEventListener('input', resizeImage);
+
+    function resizeImage() {
+      if (!image.src) return;  // If no image is loaded, do nothing
+
+      const maxWidth = parseInt(widthInput.value) || image.width;
+      const maxHeight = parseInt(heightInput.value) || image.height;
+
+      const ratio = Math.min(maxWidth / image.width, maxHeight / image.height);
+
+      const newWidth = image.width * ratio;
+      const newHeight = image.height * ratio;
+
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, newWidth, newHeight);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      canvas.toBlob((blob) => {
+        const item = new ClipboardItem({ 'image/png': blob });
+        navigator.clipboard.write([item]);
+        alert('Image copied to clipboard');
+      });
+    });
+  </script>
+</body>
+</html>
