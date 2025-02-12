@@ -16,7 +16,13 @@
             font-weight: 700;
         }
         p{
-            width: 50%;
+            width: 80%;
+        }
+        }
+        input{
+          font-family: "Plus Jakarta Sans", serif;
+          margin: 5px;
+          padding: 3px;
         }
     </style>
 </head>
@@ -47,7 +53,7 @@
 </header>
 <main>
     <h1>Custom Image Pixel Image Generator</h1>
-    <h3>Pick the colors of the pixels and background</h3>
+    <h3>1. Pick the colors of the pixels and background</h3>
     <textarea id="colorInput" placeholder="Enter up to 4 colors (e.g. #ff0000, #00ff00, #0000ff, #ffff00)" rows="4" cols="40"></textarea>
     <br>
     <label for="bgColor">Background Color:</label>
@@ -56,7 +62,7 @@
     <input type="checkbox" id="transparentToggle"> Enable Transparent Background
     <br>
     <br>
-    <h3>Select the shape of your pixel</h3>
+    <h3>2. Select the shape of your pixel</h3>
     <label for="shapeSelector">Select Pixel Shape:</label>
     <select id="shapeSelector">
         <option value="square">Square</option>
@@ -67,8 +73,8 @@
     </select>
     <br>
     <br>
-    <h3>Upload a luminosity map to determine pixel distribution</h3>
-    <p>Pixels will be distributed based on the contrast value in the luminosity map (aka black and white image). Darker areas will have bigger pixels, and lighter area will have smaller pixels. For best result, please upload your own black and white image. The resulted image will have the same dimension as your uploaded image.</p>
+    <h3>3. Upload a luminosity map to determine pixel distribution</h3>
+    <p>Pixels will be distributed based on the contrast value in the luminosity map (aka black and white image). Darker areas will have bigger pixels, and lighter area will have smaller pixels. For best result, please upload your own black and white image.<br> The resulted image will have the same dimension as your uploaded image. Zoom out if it's too big to see!</p>
     
     <label for="imageUpload">Upload Black and White Image:</label>
     <input type="file" id="imageUpload" accept="image/*" onchange="loadImageAndGeneratePixels()">
@@ -96,7 +102,7 @@
     <input type="range" id="contrastSlider" min="0" max="200" value="100" oninput="adjustContrast()">
     <br>
     <br>
-    <h3>Click generate until you see a result you like!</h3>
+    <h3>4. Click generate until you see a result you like!</h3>
     <button onclick="generateImage()">Generate Gradient and Pixels</button>
     <br><br>
     <div style="display: flex;">
