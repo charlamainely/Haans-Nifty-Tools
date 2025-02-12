@@ -88,6 +88,14 @@ footer {
   text-align: center;
 }
 
+button {
+      font-family: "Plus Jakarta Sans", serif;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      padding: 3px;
+      cursor: pointer;
+    }
+
 /* Utility classes */
 .container {
   max-width: 1200px;

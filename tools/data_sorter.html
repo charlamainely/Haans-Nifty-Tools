@@ -4,29 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Separator</title>
+<link rel="stylesheet" href="../styles.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
+        
     }
     textarea {
         width: 100%;
         height: 200px;
+        padding: 10px;
     }
     table {
         border-collapse: collapse;
         width: 100%;
+        margin-top: 10px;
     }
     th, td {
         border: 1px solid black;
         padding: 8px;
         text-align: left;
     }
+    p{
+      width: 50%;
+    }
+    /* =======================
+       RESPONSIVE
+    ======================= */
+    @media (max-width: 900px) {
+      p{
+      width: 100%;
+    }
+    }
+
+
 </style>
 </head>
 <body>
+    <header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
+<main>
     <h1>Data Separator</h1>
+    <p>This is tool developed specifically for the TST department to separate participants data into the following categories: Name, Country, Rank, Job Title, Place of Work, Phone Number and Email. It will not work for any other kind of data. Please input the data paragraph from the contact book, and the tool will sort through keywords to put the correct information in each category. Then simply export the table into Excel to paste into the course database.</p>
     <textarea id="textData" placeholder="Enter data here..."></textarea>
     
     <h2>Separated Data</h2>
@@ -35,7 +80,7 @@
     <table id="separatedTable"></table>
     
     
-    
+    </main>
     <script>
         let excelRows = [];
         const countriesList = [
