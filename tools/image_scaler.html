@@ -41,6 +41,31 @@
       margin: 5px;
       padding: 3px;
     }
+    main{
+        background-color: hsla(46,6%,92%,0.8);
+        margin: 20px;
+        padding: 5px;
+    }
+    h2{
+        margin-bottom: 10px;
+        margin-top: 0;
+    }
+    h3{
+      font-weight: 700;
+    }
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      padding: 10px;
+      text-align: center;
+    }
+    /* Optional: style individual result containers */
+    .image-result {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
     /* =======================
        RESPONSIVE
     ======================= */
@@ -79,22 +104,35 @@
 <main>
   <h2>Image Resizer Tool</h2>
   <p>This is a tool to automatically resize any image. Simply input the size you need to scale to, and paste the image you need to resize into the box at the bottom. The result can be copied with the 'copy image' button. The ratio of the image will be preserved to avoid any deformity of your original image.</p>
+  
   <div id="controls">
+    <h3>1.Input the new sizes</h3>
     <label for="width">Width: </label>
     <input type="text" id="width" placeholder="Enter max width" />
+    
     <label for="height">Height: </label>
     <input type="text" id="height" placeholder="Enter max height" />
-    <button id="copyBtn">Copy Image</button>
   </div>
-  <p>Paste an image directly from your clipboard by pressing <strong>Ctrl+V</strong></p>
-  <canvas id="resultCanvas"></canvas>
-
+  <h3>2.Select the image(s) to resize</h3>
+  <p><strong>Option 1:</strong> Paste an image directly from your clipboard by pressing <strong>Ctrl+V</strong></p>
+  
+  <!-- This canvas is used for pasted images -->
+  <canvas id="resultCanvas"></canvas><br>
+  <button id="copyBtn">Copy Image</button>
+  <br><br>
+  <!-- Container for results from uploaded images -->
+  <p><strong>Option 2:</strong> Upload image(s) from your files</p>
+    <!-- New file upload input for one or more images -->
+    <label for="fileUpload">Upload Image(s): </label>
+    <input type="file" id="fileUpload" accept="image/*" multiple />
+    <div id="results"></div>
+  
   <script>
+    // Existing elements for pasted images:
     const widthInput = document.getElementById('width');
     const heightInput = document.getElementById('height');
     const canvas = document.getElementById('resultCanvas');
     const context = canvas.getContext('2d');
-
     let image = new Image();
 
     // Paste image from clipboard
@@ -107,7 +145,7 @@
           reader.onload = function(e) {
             image.src = e.target.result;
             image.onload = () => {
-              resizeImage();  // Resize immediately after pasting the image
+              resizeImageForPasted();
             };
           };
           reader.readAsDataURL(blob);
@@ -115,16 +153,18 @@
       }
     });
 
-    // Trigger resize on width/height change
-    widthInput.addEventListener('input', resizeImage);
-    heightInput.addEventListener('input', resizeImage);
+    // Update pasted image when width/height inputs change
+    widthInput.addEventListener('input', resizeImageForPasted);
+    heightInput.addEventListener('input', resizeImageForPasted);
 
-    function resizeImage() {
+    function resizeImageForPasted() {
       if (!image.src) return;  // If no image is loaded, do nothing
 
+      // Use the provided dimensions or fall back to the image’s original size
       const maxWidth = parseInt(widthInput.value) || image.width;
       const maxHeight = parseInt(heightInput.value) || image.height;
 
+      // Compute the ratio to preserve aspect ratio
       const ratio = Math.min(maxWidth / image.width, maxHeight / image.height);
 
       const newWidth = image.width * ratio;
@@ -137,6 +177,7 @@
       context.drawImage(image, 0, 0, newWidth, newHeight);
     }
 
+    // Copy button for the pasted image canvas
     document.getElementById('copyBtn').addEventListener('click', () => {
       canvas.toBlob((blob) => {
         const item = new ClipboardItem({ 'image/png': blob });
@@ -144,7 +185,108 @@
         alert('Image copied to clipboard');
       });
     });
-  </script>
+
+    // --- New code for handling file uploads (batch processing) ---
+
+      const fileUploadInput = document.getElementById('fileUpload');
+      const resultsContainer = document.getElementById('results');
+
+      fileUploadInput.addEventListener('change', handleFileUpload, false);
+
+      function handleFileUpload(event) {
+        // Clear previous results
+        resultsContainer.innerHTML = '';
+        const files = Array.from(event.target.files);
+        
+        // Array to store processed images for the zip
+        const processedImages = [];
+        // Create an array of promises for processing each file
+        const filePromises = files.map(file => {
+          return new Promise((resolve, reject) => {
+            if (!file.type.startsWith('image/')) {
+              resolve(null);
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const img = new Image();
+              img.src = e.target.result;
+              img.onload = function() {
+                const maxWidth = parseInt(widthInput.value) || img.width;
+                const maxHeight = parseInt(heightInput.value) || img.height;
+                const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+                const newWidth = img.width * ratio;
+                const newHeight = img.height * ratio;
+                
+                // Create a new canvas for the resized image
+                const newCanvas = document.createElement('canvas');
+                newCanvas.width = newWidth;
+                newCanvas.height = newHeight;
+                const ctx = newCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                
+                // Create a container div for this image’s result
+                const imageResultDiv = document.createElement('div');
+                imageResultDiv.classList.add('image-result');
+                imageResultDiv.appendChild(newCanvas);
+
+                // Convert the canvas to a Blob and display the file size and download link
+                newCanvas.toBlob((blob) => {
+                  const sizeInKB = (blob.size / 1024).toFixed(2);
+                  const sizeText = document.createElement('p');
+                  sizeText.textContent = `New file size: ${sizeInKB} KB`;
+                  imageResultDiv.appendChild(sizeText);
+
+                  const downloadLink = document.createElement('a');
+                  downloadLink.textContent = 'Download Resized Image';
+                  downloadLink.href = newCanvas.toDataURL('image/png');
+                  downloadLink.download = file.name.split('.')[0] + '-resized.png';
+                  downloadLink.style.display = 'block';
+                  downloadLink.style.marginTop = '5px';
+                  imageResultDiv.appendChild(downloadLink);
+
+                  // Append the result div to the grid container
+                  resultsContainer.appendChild(imageResultDiv);
+
+                  // Save this image’s blob and filename for the zip
+                  processedImages.push({
+                    name: file.name.split('.')[0] + '-resized.png',
+                    blob: blob
+                  });
+                  resolve();
+                }, 'image/png');
+              };
+            };
+            reader.readAsDataURL(file);
+          });
+        });
+        
+        // Once all images have been processed, add the "Download All" button.
+        Promise.all(filePromises).then(() => {
+          if (processedImages.length > 0) {
+            const downloadAllBtn = document.createElement('button');
+            downloadAllBtn.textContent = 'Download All';
+            downloadAllBtn.addEventListener('click', function() {
+              const zip = new JSZip();
+              processedImages.forEach(item => {
+                zip.file(item.name, item.blob);
+              });
+              // Generate the zip file and trigger the download
+              zip.generateAsync({ type: "blob" }).then(function(content) {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = "resized-images.zip";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              });
+            });
+            // Insert the download button at the top of the results container
+            resultsContainer.insertBefore(downloadAllBtn, resultsContainer.firstChild);
+          }
+        });
+      }
+    </script>
   </main>
 </body>
 </html>
