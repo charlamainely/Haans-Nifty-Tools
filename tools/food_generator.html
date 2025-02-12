@@ -4,34 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced Random Food Options Generator</title>
+  <!-- Include any external CSS if needed -->
   <link rel="stylesheet" href="../styles.css" />
-  <!-- Include Papa Parse from a CDN -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Include Papa Parse for CSV parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+    }
+    h1{
+        text-align: center;
     }
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
     }
-    .filters, .category-section {
-      margin: 20px 0;
-      padding: 10px;
+    /* Flex container for two columns */
+    .two-column-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    /* Left column for options */
+    .options-panel {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      background: #f7f7f7;
+      background-color: hsla(46,6%,92%,0.8);
     }
-    .filters h3, .category-section h3 {
+    /* Right column for results */
+    .results-panel {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: hsla(46,6%,92%,0.8);
+    }
+    /* Styling for input sections */
+    .category-section,
+    .filters {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: hsla(46,6%,92%,0.8);
+    }
+    .filters h3 {
       margin-top: 0;
+      font-weight: 700;
     }
     .options-list {
       margin-top: 20px;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      background-color: #eef;
+      background-color: hsla(46,6%,92%,0.8);
     }
     label {
       display: block;
@@ -45,58 +78,90 @@
   </style>
 </head>
 <body>
-  <!-- Header (optional navigation can go here) -->
-  <header>
-    <h1>Advanced Random Food Options Generator</h1>
-  </header>
 
+<header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
+<main>
+<h1>Random Food Options Generator</h1>
+  
   <div class="container">
-    <!-- Category and number selection -->
-    <div class="category-section">
-      <label for="category">Choose a category:</label>
-      <select id="category">
-        <option value="all">All Categories</option>
-        <option value="snacks">Snacks</option>
-        <option value="mainCourse">Main Course</option>
-        <option value="desserts">Desserts</option>
-      </select>
+    <div class="two-column-container">
+      <!-- Left Column: Options -->
+      <div class="options-panel">
+        <!-- Category and Number Selections -->
+        <div class="category-section">
+          <label for="category">Choose a category:</label>
+          <select id="category">
+            <option value="all">All Categories</option>
+            <option value="snacks">Snacks</option>
+            <option value="mainCourse">Main Course</option>
+            <option value="desserts">Desserts</option>
+          </select>
+        </div>
+
+        <div class="category-section">
+          <label for="num-options">Number of food options to generate:</label>
+          <select id="num-options">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <!-- Advanced Filter Options -->
+        <div class="filters">
+          <h3>Dietary Restrictions</h3>
+          <label><input type="checkbox" id="vegetarian"> Vegetarian</label>
+          <label><input type="checkbox" id="vegan"> Vegan</label>
+          <label><input type="checkbox" id="glutenFree"> Gluten-Free</label>
+          <br>
+
+          <h3>Allergen & Other Preferences</h3>
+          <label><input type="checkbox" id="nutFree"> Nut-Free</label>
+          <label><input type="checkbox" id="dairyFree"> Dairy-Free</label>
+          <label><input type="checkbox" id="eggFree"> Egg-Free</label>
+          <label><input type="checkbox" id="kosher"> Kosher</label>
+          <label><input type="checkbox" id="halal"> Halal</label>
+          <label><input type="checkbox" id="soyFree"> Soy-Free</label>
+          <label><input type="checkbox" id="fishFree"> Fish-Free</label>
+        </div>
+        
+        <!-- Generate Button -->
+        <button id="generateBtn" onclick="generateOptions()">Generate Food Options</button>
+      </div>
+
+      <!-- Right Column: Results -->
+      <div class="results-panel">
+        <h2>Results</h2>
+        <div id="output" class="options-list"></div>
+      </div>
     </div>
-
-    <div class="category-section">
-      <label for="num-options">Number of food options to generate:</label>
-      <select id="num-options">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </div>
-
-    <!-- Advanced Filter Options -->
-    <div class="filters">
-      <h3>Dietary Restrictions</h3>
-      <label><input type="checkbox" id="vegetarian"> Vegetarian</label>
-      <label><input type="checkbox" id="vegan"> Vegan</label>
-      <label><input type="checkbox" id="glutenFree"> Gluten-Free</label>
-
-      <h3>Allergen & Other Preferences</h3>
-      <label><input type="checkbox" id="nutFree"> Nut-Free</label>
-      <label><input type="checkbox" id="dairyFree"> Dairy-Free</label>
-      <label><input type="checkbox" id="eggFree"> Egg-Free</label>
-      <label><input type="checkbox" id="kosher"> Kosher</label>
-      <label><input type="checkbox" id="halal"> Halal</label>
-      <label><input type="checkbox" id="soyFree"> Soy-Free</label>
-      <label><input type="checkbox" id="fishFree"> Fish-Free</label>
-    </div>
-
-    <!-- Button to generate options -->
-    <button onclick="generateOptions()">Generate Food Options</button>
-
-    <!-- Output display -->
-    <div id="output" class="options-list"></div>
   </div>
-
+  </main>
   <script>
     // Global variable to hold the food data loaded from the CSV.
     let foods = [];
@@ -108,7 +173,7 @@
         .then(csvText => {
           const parsedData = Papa.parse(csvText, {
             header: true,         // Use the first row as headers.
-            dynamicTyping: true   // Convert "true"/"false" and numeric strings.
+            dynamicTyping: true   // Convert "true"/"false" strings to booleans automatically.
           });
           foods = parsedData.data;
           console.log("Food data loaded:", foods);
@@ -116,7 +181,7 @@
         .catch(error => console.error("Error loading CSV data:", error));
     }
 
-    // Immediately load food data.
+    // Load food data immediately.
     loadFoodData();
 
     // Helper function to shuffle an array.
@@ -127,25 +192,26 @@
       }
     }
 
-    // Function to generate options based on filters and CSV data.
+    // Generate options based on the selected filters.
     function generateOptions() {
-      // Ensure food data is loaded.
+      // Check if the food data is loaded.
       if (foods.length === 0) {
         alert("Food data is still loading. Please try again shortly.");
         return;
       }
-
+      
+      // Retrieve user selections.
       const category = document.getElementById('category').value;
       const numOptions = parseInt(document.getElementById('num-options').value, 10);
       const outputDiv = document.getElementById('output');
-      outputDiv.innerHTML = ""; // Clear previous output
+      outputDiv.innerHTML = ""; // Clear previous results.
 
-      // Read dietary filter settings.
+      // Dietary filter settings.
       const filterVegetarian = document.getElementById('vegetarian').checked;
       const filterVegan = document.getElementById('vegan').checked;
       const filterGlutenFree = document.getElementById('glutenFree').checked;
-
-      // Read allergen/other preferences.
+      
+      // Allergen & other preference filter settings.
       const filterNutFree = document.getElementById('nutFree').checked;
       const filterDairyFree = document.getElementById('dairyFree').checked;
       const filterEggFree = document.getElementById('eggFree').checked;
@@ -154,7 +220,7 @@
       const filterSoyFree = document.getElementById('soyFree').checked;
       const filterFishFree = document.getElementById('fishFree').checked;
 
-      // Filter the food options by category.
+      // Filter the foods by category.
       let filteredFoods = foods.filter(food => {
         if (category !== "all" && food.category !== category) return false;
         return true;
@@ -168,7 +234,7 @@
         return true;
       });
 
-      // Apply allergen/other preference filters.
+      // Apply allergen and other preference filters.
       filteredFoods = filteredFoods.filter(food => {
         if (filterNutFree && !food.nutFree) return false;
         if (filterDairyFree && !food.dairyFree) return false;
@@ -180,13 +246,13 @@
         return true;
       });
 
-      // If no food options remain after filtering, inform the user.
+      // If no foods match the filters, display a message.
       if (filteredFoods.length === 0) {
         outputDiv.textContent = "No food options match your filters. Please adjust your selections.";
         return;
       }
 
-      // Randomize the filtered options.
+      // Randomize the filtered results.
       shuffleArray(filteredFoods);
 
       // Display the first `numOptions` items.
