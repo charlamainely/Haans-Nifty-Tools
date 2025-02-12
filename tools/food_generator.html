@@ -148,6 +148,7 @@
           <label><input type="checkbox" id="halal"> Halal</label>
           <label><input type="checkbox" id="soyFree"> Soy-Free</label>
           <label><input type="checkbox" id="fishFree"> Fish-Free</label>
+          <label><input type="checkbox" id="pescatarian"> Pescatarian</label>
         </div>
         
         <!-- Generate Button -->
@@ -219,6 +220,7 @@
       const filterHalal = document.getElementById('halal').checked;
       const filterSoyFree = document.getElementById('soyFree').checked;
       const filterFishFree = document.getElementById('fishFree').checked;
+      const filterPescatarian = document.getElementById('pescatarian').checked;
 
       // Filter the foods by category.
       let filteredFoods = foods.filter(food => {
@@ -243,6 +245,7 @@
         if (filterHalal && !food.halal) return false;
         if (filterSoyFree && !food.soyFree) return false;
         if (filterFishFree && !food.fishFree) return false;
+        if (filterPescatarian && !food.pescatarian) return false;
         return true;
       });
 
