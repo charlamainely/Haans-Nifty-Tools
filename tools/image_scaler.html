@@ -188,102 +188,72 @@
 
     // --- New code for handling file uploads (batch processing) ---
 
+      // Get reference to the file input and the results container
       const fileUploadInput = document.getElementById('fileUpload');
       const resultsContainer = document.getElementById('results');
 
+      // Listen for file selection changes
       fileUploadInput.addEventListener('change', handleFileUpload, false);
 
       function handleFileUpload(event) {
         // Clear previous results
         resultsContainer.innerHTML = '';
-        const files = Array.from(event.target.files);
-        
-        // Array to store processed images for the zip
-        const processedImages = [];
-        // Create an array of promises for processing each file
-        const filePromises = files.map(file => {
-          return new Promise((resolve, reject) => {
-            if (!file.type.startsWith('image/')) {
-              resolve(null);
-              return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              const img = new Image();
-              img.src = e.target.result;
-              img.onload = function() {
-                const maxWidth = parseInt(widthInput.value) || img.width;
-                const maxHeight = parseInt(heightInput.value) || img.height;
-                const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-                const newWidth = img.width * ratio;
-                const newHeight = img.height * ratio;
-                
-                // Create a new canvas for the resized image
-                const newCanvas = document.createElement('canvas');
-                newCanvas.width = newWidth;
-                newCanvas.height = newHeight;
-                const ctx = newCanvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                
-                // Create a container div for this image’s result
-                const imageResultDiv = document.createElement('div');
-                imageResultDiv.classList.add('image-result');
-                imageResultDiv.appendChild(newCanvas);
+        const files = event.target.files;
 
-                // Convert the canvas to a Blob and display the file size and download link
-                newCanvas.toBlob((blob) => {
-                  const sizeInKB = (blob.size / 1024).toFixed(2);
-                  const sizeText = document.createElement('p');
-                  sizeText.textContent = `New file size: ${sizeInKB} KB`;
-                  imageResultDiv.appendChild(sizeText);
-
-                  const downloadLink = document.createElement('a');
-                  downloadLink.textContent = 'Download Resized Image';
-                  downloadLink.href = newCanvas.toDataURL('image/png');
-                  downloadLink.download = file.name.split('.')[0] + '-resized.png';
-                  downloadLink.style.display = 'block';
-                  downloadLink.style.marginTop = '5px';
-                  imageResultDiv.appendChild(downloadLink);
-
-                  // Append the result div to the grid container
-                  resultsContainer.appendChild(imageResultDiv);
-
-                  // Save this image’s blob and filename for the zip
-                  processedImages.push({
-                    name: file.name.split('.')[0] + '-resized.png',
-                    blob: blob
-                  });
-                  resolve();
-                }, 'image/png');
-              };
-            };
-            reader.readAsDataURL(file);
-          });
-        });
-        
-        // Once all images have been processed, add the "Download All" button.
-        Promise.all(filePromises).then(() => {
-          if (processedImages.length > 0) {
-            const downloadAllBtn = document.createElement('button');
-            downloadAllBtn.textContent = 'Download All';
-            downloadAllBtn.addEventListener('click', function() {
-              const zip = new JSZip();
-              processedImages.forEach(item => {
-                zip.file(item.name, item.blob);
-              });
-              // Generate the zip file and trigger the download
-              zip.generateAsync({ type: "blob" }).then(function(content) {
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(content);
-                a.download = "resized-images.zip";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              });
-            });
-            // Insert the download button at the top of the results container
-            resultsContainer.insertBefore(downloadAllBtn, resultsContainer.firstChild);
+        // Process each selected file
+        Array.from(files).forEach(file => {
+          if (!file.type.startsWith('image/')) {
+            return;  // Skip non-image files
           }
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            // Create a new image for this file
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+              // Compute new dimensions using current width/height inputs
+              const maxWidth = parseInt(widthInput.value) || img.width;
+              const maxHeight = parseInt(heightInput.value) || img.height;
+              const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+              const newWidth = img.width * ratio;
+              const newHeight = img.height * ratio;
+
+              // Create a new canvas for the resized image
+              const newCanvas = document.createElement('canvas');
+              newCanvas.width = newWidth;
+              newCanvas.height = newHeight;
+              const ctx = newCanvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+              // Create a container div for this image’s result
+              const imageResultDiv = document.createElement('div');
+              imageResultDiv.classList.add('image-result');
+
+              // Append the canvas to the container
+              imageResultDiv.appendChild(newCanvas);
+
+              // Convert the canvas to a Blob to get the file size
+              newCanvas.toBlob((blob) => {
+                const sizeInKB = (blob.size / 1024).toFixed(2);
+                const sizeText = document.createElement('p');
+                sizeText.textContent = `New file size: ${sizeInKB} KB`;
+                imageResultDiv.appendChild(sizeText);
+              }, 'image/png');
+
+              // Optional: Add a download link for the resized image
+              const downloadLink = document.createElement('a');
+              downloadLink.textContent = 'Download Resized Image';
+              downloadLink.href = newCanvas.toDataURL('image/png');
+              downloadLink.download = file.name.split('.')[0] + '-resized.png';
+              downloadLink.style.display = 'block';
+              downloadLink.style.marginTop = '5px';
+              imageResultDiv.appendChild(downloadLink);
+
+              // Append this image’s result to the results container
+              resultsContainer.appendChild(imageResultDiv);
+            };
+          };
+          reader.readAsDataURL(file);
         });
       }
     </script>
