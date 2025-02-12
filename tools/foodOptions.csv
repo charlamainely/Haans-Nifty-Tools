@@ -1,0 +1,240 @@
+name,category,vegetarian,vegan,glutenFree,nutFree,dairyFree,eggFree,kosher,halal,soyFree,fishFree
+---------------------------------------------------------------
+# SNACKS
+Potato Chips,snacks,true,true,true,true,true,true,true,true,true,true,true
+Pretzels,snacks,true,true,false,true,true,true,true,true,true,true,true
+Popcorn,snacks,true,true,true,true,true,true,true,true,true,true,true
+Cheese Sticks,snacks,true,false,false,true,false,true,true,true,true,true,true
+Mozzarella Sticks,snacks,true,false,false,true,false,true,true,true,true,true,true
+Nachos,snacks,true,false,true,true,true,false,true,true,true,true,true
+Granola Bars,snacks,true,true,false,false,true,true,true,true,true,true,true
+Trail Mix,snacks,true,true,true,false,true,true,true,true,true,true,true
+Peanuts,snacks,true,true,true,false,true,true,true,true,true,true,true
+Crackers,snacks,true,true,false,true,true,true,true,true,true,true,true
+Fruit Snacks,snacks,true,false,true,true,true,true,false,false,true,true,true
+Rice Cakes,snacks,true,true,true,true,true,true,true,true,true,true,true
+Beef Jerky,snacks,false,false,true,true,true,true,true,false,true,true,true
+Veggie Chips,snacks,true,true,true,true,true,true,true,true,true,true,true
+Dried Fruit,snacks,true,true,true,true,true,true,true,true,true,true,true
+Pita Chips,snacks,true,true,false,true,true,true,true,true,true,true,true
+Hummus and Veggies,snacks,true,true,true,true,true,true,true,true,true,true,true
+Mini Sandwiches,snacks,true,false,false,true,false,false,false,false,true,true,true
+Fruit Slices,snacks,true,true,true,true,true,true,true,true,true,true,true
+Yogurt Parfait,snacks,true,false,true,true,false,true,true,false,true,false,true
+Hột Vịt Lộn,snacks,false,false,true,true,true,true,true,false,true,true,true
+Cucumber Slices with Dip,snacks,true,false,true,true,false,true,true,false,true,true,true
+Apple Slices with Peanut Butter,snacks,true,true,true,false,true,true,true,true,true,true,true
+Smoothie,snacks,true,false,true,true,true,false,true,true,true,true,true
+Popsicles,snacks,true,true,true,true,true,false,true,true,true,true,true
+Mini Quesadillas,snacks,true,false,false,true,false,true,true,false,true,true,true
+Spring Rolls,snacks,true,true,false,true,true,true,true,true,true,true,true
+Egg Rolls,snacks,false,false,false,true,true,false,false,false,true,true,true
+Samosas,snacks,true,true,false,true,true,false,true,true,true,true,true
+Pizza Bites,snacks,true,false,false,true,false,true,true,false,true,true,true
+Chicken Wings,snacks,false,false,true,true,true,true,true,false,true,true,true
+Cheese Popcorn,snacks,true,false,true,true,false,true,true,false,true,true,true
+Salted Almonds,snacks,true,true,true,false,true,true,true,true,true,true,true
+Salted Peanuts,snacks,true,true,true,false,true,true,true,true,true,true,true
+Chocolate-Covered Pretzels,snacks,true,false,false,true,false,true,true,false,true,true,true
+Baked Pita Chips,snacks,true,true,false,true,true,true,true,true,true,true,true
+Cheese and Crackers,snacks,true,false,false,true,false,true,true,false,true,true,true
+Granola with Yogurt,snacks,true,false,false,false,false,true,true,false,true,true,true
+Carrot Sticks with Dip,snacks,true,false,true,true,false,true,true,false,true,true,true
+Mini Pizzas,snacks,true,false,false,true,false,true,true,false,true,true,true
+Mini Tacos,snacks,true,false,true,true,true,true,true,false,true,true,true
+Chips and Salsa,snacks,true,true,true,true,true,true,true,true,true,true,true
+Mini Pancakes,snacks,true,false,false,true,false,false,false,true,true,true,true
+Mini Waffles,snacks,true,false,false,true,false,false,false,true,true,true,true
+Guacamole and Chips,snacks,true,true,true,true,true,true,true,true,true,true,true
+Fruit Salad,snacks,true,true,true,true,true,true,true,true,true,true,true
+Edamame,snacks,true,true,true,true,true,true,true,true,true,false,true
+Seaweed Salad,snacks,true,true,true,true,true,true,true,true,true,true,true
+Gyoza,snacks,false,false,false,true,true,true,true,false,true,true,true
+Baozi,snacks,false,false,false,true,true,true,true,false,true,true,true
+Onigiri,snacks,true,true,true,true,true,true,true,true,true,true,true
+Kimchi Pancakes,snacks,false,false,false,true,true,true,false,false,true,true,true
+Prawn Crackers,snacks,false,false,true,true,true,true,true,false,true,true,true
+Takoyaki,snacks,false,false,false,true,true,true,false,false,true,true,true
+Tempura Vegetables,snacks,true,false,false,true,true,false,false,true,true,true,true
+Taiwanese Popcorn Chicken,snacks,false,false,false,true,true,true,true,false,true,true,true
+Fish Cakes,snacks,false,false,false,true,true,true,false,false,true,true,true
+Yakitori,snacks,false,false,true,true,true,true,true,false,true,true,true
+Japchae,snacks,false,false,true,true,true,true,true,false,true,true,true
+Rice Crackers with Nori,snacks,true,true,true,true,true,true,true,true,true,true,true
+Bánh Mì Chả Cá,snacks,false,false,false,true,true,true,true,false,true,true,false
+Bánh Bèo,snacks,true,true,true,true,true,true,true,true,true,true,true
+Chả Giò,snacks,false,false,false,true,true,true,false,false,true,true,true
+Bánh Da Lợn,snacks,true,false,true,true,true,false,false,false,true,true,true
+Nem Chua,snacks,false,false,true,true,true,true,true,false,true,true,true
+Bánh Khoai Mì Nướng,snacks,true,false,true,true,true,false,false,false,true,true,true
+Gỏi Cuốn,snacks,true,true,true,true,true,true,true,true,true,true,true
+Bánh Đúc,snacks,true,true,true,true,true,true,true,true,true,true,true
+Trà Sữa,snacks,true,false,true,true,true,false,false,false,true,false,true
+
+---------------------------------------------------------------
+# MAIN COURSE
+Spaghetti Bolognese,mainCourse,false,false,false,true,false,true,true,false,false,true,true
+Chicken Alfredo,mainCourse,false,false,false,true,false,true,true,false,false,true,true
+Beef Stir Fry,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Grilled Salmon,mainCourse,false,false,true,true,true,true,true,true,true,true,false
+Roast Chicken,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Beef Tacos,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Vegetable Stir Fry,mainCourse,true,true,true,true,true,true,true,true,true,true,true
+Chicken Parmesan,mainCourse,false,false,false,true,false,true,true,false,false,true,true
+Chicken and Rice,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Pork Chops,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Grilled Steak,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Lamb Curry,mainCourse,false,false,true,true,true,true,true,false,true,true,true
+Vegetable Lasagna,mainCourse,true,false,false,true,true,false,true,false,true,true,true
+Beef Wellington,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Fish and Chips,mainCourse,false,false,false,true,true,true,true,false,false,true,false
+Chicken Tikka Masala,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Pulled Pork Sandwiches,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+BBQ Ribs,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Baked Ziti,mainCourse,true,false,false,true,true,false,true,false,true,true,true
+Risotto,mainCourse,true,false,true,true,true,false,true,false,true,true,true
+Lasagna,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Chicken Fajitas,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Vegetable Soup,mainCourse,true,true,true,true,true,true,true,true,true,true,true
+Ratatouille,mainCourse,true,true,true,true,true,true,true,true,true,true,true
+Beef Tacos,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Shrimp Scampi,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Eggplant Parmesan,mainCourse,true,false,false,true,true,false,true,false,true,true,true
+Beef Stir Fry,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Fish Tacos,mainCourse,false,false,true,true,true,false,true,false,false,true,false
+Bulgur Wheat Salad,mainCourse,true,true,false,true,true,true,true,true,true,true,true
+Curry Chicken,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Stuffed Peppers,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Peking Duck,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bangers and Mash,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Beef Stroganoff,mainCourse,false,false,false,true,true,false,true,false,false,true,true
+Chicken Marsala,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Vegetable Samosas,mainCourse,true,true,false,true,true,true,true,true,true,true,true
+Moussaka,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Steak and Potatoes,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Pizza Margherita,mainCourse,true,false,false,true,false,true,true,false,true,true,true
+Baked Chicken Wings,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Fettuccine Alfredo,mainCourse,true,false,false,true,false,true,true,false,true,true,true
+Chicken Fried Rice,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Pasta Primavera,mainCourse,true,false,false,true,false,true,true,false,true,true,true
+Grilled Cheese Sandwich,mainCourse,true,false,false,true,false,true,true,false,true,true,true
+Pork Schnitzel,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Tofu Stir Fry,mainCourse,true,true,true,true,true,true,true,true,true,true,true
+Pulled Beef Tacos,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Cheeseburger,mainCourse,false,false,false,true,true,false,true,false,false,true,true
+Chicken Caesar Salad,mainCourse,false,false,true,true,true,false,true,false,false,true,true
+Ramen,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Sukiyaki,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bibimbap,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Mapo Tofu,mainCourse,false,false,true,true,true,true,true,false,false,false,true
+Char Siu,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Unagi Don,mainCourse,false,false,true,true,true,true,true,false,false,true,false
+Hot Pot,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Teriyaki Chicken,mainCourse,false,false,true,true,true,true,true,false,false,false,true
+Katsu Curry,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Shoyu Ramen,mainCourse,false,false,false,true,true,true,true,false,false,false,true
+Tonkatsu,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Beef Bulgogi,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Korean Fried Chicken,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Kung Pao Chicken,mainCourse,false,false,true,false,true,true,true,false,false,true,true
+Peking Duck,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Japchae,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Okonomiyaki,mainCourse,false,false,false,true,true,true,false,false,true,true,true
+Lo Mein,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Kimchi Stew,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Shanghai Fried Rice Cake,mainCourse,true,true,false,true,true,true,true,false,true,true,true
+Phở,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bánh Mì,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Cơm Tấm,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bún Bò Huế,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bánh Canh,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Mì Quảng,mainCourse,false,false,false,true,true,true,true,false,false,true,true
+Gà Nướng Sả,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Cá Kho Tộ,mainCourse,false,false,true,true,true,true,true,false,false,true,false
+Bánh Hỏi,mainCourse,true,true,true,true,true,true,true,true,true,true,true
+Chạo Tôm,mainCourse,false,false,true,true,true,true,true,false,false,true,false
+Bún Chả,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bánh Xèo,mainCourse,false,false,false,true,true,true,false,false,true,true,true
+Cơm Gà Hội An,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Lẩu Thái,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bún Riêu,mainCourse,false,false,true,true,true,true,true,false,false,true,false
+Bò Lúc Lắc,mainCourse,false,false,true,true,true,true,true,false,false,true,true
+Bún Mắm,mainCourse,false,false,true,true,true,true,true,false,false,true,false
+Bánh Xèo,mainCourse,false,false,false,true,true,true,false,false,true,true,true
+
+---------------------------------------------------------------
+# DESSERTS
+Chocolate Cake,desserts,true,false,false,true,true,false,false,false,true,true,true
+Apple Pie,desserts,true,false,false,true,true,false,false,false,true,true,true
+Cheesecake,desserts,true,false,false,true,false,true,true,false,true,true,true
+Brownies,desserts,true,false,false,true,true,false,false,false,true,true,true
+Tiramisu,desserts,true,false,false,true,true,false,false,false,true,true,true
+Cupcakes,desserts,true,false,false,true,true,false,false,false,true,true,true
+Lemon Meringue Pie,desserts,true,false,false,true,true,true,false,false,true,true,true
+Carrot Cake,desserts,true,false,false,true,false,false,false,false,true,true,true
+Strawberry Shortcake,desserts,true,false,false,true,true,false,false,false,true,true,true
+Pavlova,desserts,true,false,true,true,true,false,false,false,true,true,true
+Rice Pudding,desserts,true,false,true,true,true,true,false,false,true,true,true
+Ice Cream,desserts,true,false,true,true,true,true,false,false,false,true,true
+Gelato,desserts,true,false,true,true,true,true,false,false,false,true,true
+Crème Brûlée,desserts,true,false,true,true,true,false,false,false,true,true,true
+Churros,desserts,true,false,false,true,true,true,false,false,true,true,true
+Fried Ice Cream,desserts,true,false,false,true,true,true,false,false,true,true,true
+Macarons,desserts,true,false,true,false,true,false,false,false,true,true,true
+Baklava,desserts,true,false,false,true,false,true,false,false,true,true,true
+Chocolate Mousse,desserts,true,false,true,true,true,true,false,false,true,true,true
+Pumpkin Pie,desserts,true,false,false,true,true,false,false,false,true,true,true
+Pecan Pie,desserts,true,false,false,true,false,false,false,false,true,true,true
+Molten Lava Cake,desserts,true,false,false,true,true,false,false,false,true,true,true
+Cinnamon Rolls,desserts,true,false,false,true,true,false,false,false,true,true,true
+Sugar Cookies,desserts,true,false,false,true,true,false,false,false,true,true,true
+Eclairs,desserts,true,false,false,true,true,false,false,false,true,true,true
+Fruit Tart,desserts,true,false,false,true,true,false,false,false,true,true,true
+Lemon Bars,desserts,true,false,false,true,true,false,false,false,true,true,true
+Peach Cobbler,desserts,true,false,false,true,true,false,false,false,true,true,true
+Lamington,desserts,true,false,false,true,true,false,false,false,true,true,true
+Chocolate Chip Cookies,desserts,true,false,false,true,true,false,false,false,true,true,true
+Fudge,desserts,true,false,true,true,true,true,false,false,true,true,true
+Panna Cotta,desserts,true,false,true,true,true,true,false,false,true,true,true
+Mango Sticky Rice,desserts,true,true,true,true,true,true,true,true,true,true,true
+Raspberry Sorbet,desserts,true,true,true,true,true,true,true,true,true,true,true
+Coconut Macaroons,desserts,true,true,true,true,true,true,true,true,true,true,true
+Madeleines,desserts,true,false,false,true,true,false,false,false,true,true,true
+Donuts,desserts,true,false,false,true,true,false,false,false,true,true,true
+Choco-Peanut Butter Cups,desserts,true,false,false,true,false,false,false,false,true,true,true
+Red Velvet Cake,desserts,true,false,false,true,true,false,false,false,true,true,true
+Marshmallow Treats,desserts,true,false,true,true,true,true,false,false,true,true,true
+Frozen Yogurt,desserts,true,false,true,true,true,false,false,false,true,false,true
+Raisin Bran Muffins,desserts,true,false,false,true,true,false,false,false,true,true,true
+Key Lime Pie,desserts,true,false,false,true,true,false,false,false,true,true,true
+Frosted Cupcakes,desserts,true,false,false,true,true,false,false,false,true,true,true
+Mochi,desserts,true,true,true,true,true,true,true,true,true,true,true
+Dorayaki,desserts,true,false,false,true,true,false,false,false,true,true,true
+Taiyaki,desserts,true,false,false,true,true,false,false,false,true,true,true
+Mango Sticky Rice,desserts,true,true,true,true,true,true,true,true,true,true,true
+Sesame Balls,desserts,true,true,false,true,true,true,true,true,true,true,true
+Matcha Ice Cream,desserts,true,false,true,true,true,false,false,false,true,false,true
+Custard Bun,desserts,true,false,false,true,true,false,false,false,true,true,true
+Egg Tart,desserts,true,false,false,true,true,false,false,false,true,true,true
+Melon Pan,desserts,true,false,false,true,true,false,false,false,true,true,true
+Red Bean Ice Cream,desserts,true,false,true,true,true,false,false,false,true,false,true
+Dango,desserts,true,true,true,true,true,true,true,true,true,true,true
+Black Sesame Pudding,desserts,true,false,true,true,true,false,false,false,true,true,true
+Taro Bubble Tea,desserts,true,false,true,true,true,false,false,false,true,true,true
+Sweet Rice Cakes,desserts,true,true,true,true,true,true,true,true,true,true,true
+Matcha Roll Cake,desserts,true,false,false,true,true,false,false,false,true,true,true
+Lychee Jelly,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Ba Màu,desserts,true,false,true,true,true,true,false,false,true,true,true
+Chè Bưởi,desserts,true,false,true,true,true,true,false,false,true,true,true
+Bánh Chuối Nướng,desserts,true,false,true,true,true,false,false,false,true,true,true
+Bánh Pía,desserts,true,false,false,true,true,false,false,false,true,true,true
+Chè Thái,desserts,true,false,true,true,true,true,false,false,true,true,true
+Bánh Flan,desserts,true,false,true,true,true,false,false,false,true,true,true
+Chè Đậu Xanh,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Trôi Nước,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Hạt Sen,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Nếp Cẩm,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Cốm,desserts,true,true,true,true,true,true,true,true,true,true,true
+Chè Xôi Nếp,desserts,true,true,true,true,true,true,true,true,true,true,true
+Bánh Đậu Xanh,desserts,true,false,false,true,true,false,false,false,true,true,true
+Bánh Bò Nướng,desserts,true,false,false,true,true,false,false,false,true,true,true
