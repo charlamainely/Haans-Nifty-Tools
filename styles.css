@@ -38,9 +38,15 @@ body {
 }
 
 
-h1, h2{
+h1{
   font-family: "Tsukimi Rounded", serif;
   margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+h2{
+  font-family: "Tsukimi Rounded", serif;
+  margin-top: 1rem;
   font-weight: 700;
 }
 
@@ -130,7 +136,8 @@ textarea {
   /* Creates a responsive grid: each column is minimum 200px, but can expand */
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
   gap: 2rem; /* Space between squares */
-  margin: 2rem 0; /* Some spacing around the gallery */
+  margin: 0.5rem 0; /* Some spacing around the gallery */
+  margin-bottom: 2rem;
 }
 
 /* Each item is a square with a nice background, clickable, etc. */
