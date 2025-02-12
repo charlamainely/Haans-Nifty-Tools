@@ -96,6 +96,10 @@ button {
       cursor: pointer;
     }
 
+textarea {
+        padding: 10px;
+    }
+
 /* Utility classes */
 .container {
   max-width: 1200px;

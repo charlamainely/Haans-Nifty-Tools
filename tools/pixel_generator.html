@@ -3,12 +3,51 @@
 <head>
     <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Image Pixel Image Generator</title>
+    <link rel="stylesheet" href="../styles.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
     <style>
         canvas { border: 1px solid black; margin-right: 20px; }
+        h3{
+            font-family: "Tsukimi Rounded", serif;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        p{
+            width: 50%;
+        }
     </style>
 </head>
 <body>
+    <header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
+<main>
     <h1>Custom Image Pixel Image Generator</h1>
+    <h3>Pick the colors of the pixels and background</h3>
     <textarea id="colorInput" placeholder="Enter up to 4 colors (e.g. #ff0000, #00ff00, #0000ff, #ffff00)" rows="4" cols="40"></textarea>
     <br>
     <label for="bgColor">Background Color:</label>
@@ -16,6 +55,8 @@
     <label for="transparentToggle">Transparent Background:</label>
     <input type="checkbox" id="transparentToggle"> Enable Transparent Background
     <br>
+    <br>
+    <h3>Select the shape of your pixel</h3>
     <label for="shapeSelector">Select Pixel Shape:</label>
     <select id="shapeSelector">
         <option value="square">Square</option>
@@ -25,15 +66,20 @@
         <option value="horizontalStripe">Horizontal Stripe</option>
     </select>
     <br>
+    <br>
+    <h3>Upload a luminosity map to determine pixel distribution</h3>
+    <p>Pixels will be distributed based on the contrast value in the luminosity map (aka black and white image). Darker areas will have bigger pixels, and lighter area will have smaller pixels. For best result, please upload your own black and white image. The resulted image will have the same dimension as your uploaded image.</p>
+    
+    <label for="imageUpload">Upload Black and White Image:</label>
+    <input type="file" id="imageUpload" accept="image/*" onchange="loadImageAndGeneratePixels()">
+    <br>
+    <br>
     <label for="gradientSource">Gradient Source:</label>
     <select id="gradientSource">
         <option value="corners">Corners</option>
         <option value="edges">Edges</option>
         <option value="customImage">Upload Image</option>
     </select>
-    <br>
-    <label for="imageUpload">Upload Black and White Image:</label>
-    <input type="file" id="imageUpload" accept="image/*" onchange="loadImageAndGeneratePixels()">
     <br>
     <label for="numSources">Number of Sources (1 to 4):</label>
     <input type="number" id="numSources" min="1" max="4" value="2">
@@ -49,6 +95,8 @@
     <label for="contrastSlider">Adjust Contrast: </label>
     <input type="range" id="contrastSlider" min="0" max="200" value="100" oninput="adjustContrast()">
     <br>
+    <br>
+    <h3>Click generate until you see a result you like!</h3>
     <button onclick="generateImage()">Generate Gradient and Pixels</button>
     <br><br>
     <div style="display: flex;">
@@ -56,7 +104,9 @@
         <canvas id="colorCanvas"></canvas>
     </div>
     <br>
+    <h3>Get the vectorized version of your result here!</h3>
     <button onclick="exportAsSVG()">Export as SVG</button>
+    </main>
     
     <script>
         let bwImageData = null; // Store the uploaded image data
