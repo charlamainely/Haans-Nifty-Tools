@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Be My Valentine?</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Pacifico&family=Zain:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  </head>
+<body>
+  <div id="container">
+    <!-- Left Sidebar: Decoration Preview Panel with arrow navigation (Desktop) -->
+    <div id="left-panel">
+      <div class="menu">
+        <button id="menu-prev">&larr;</button>
+        <span id="menu-category">Decorate Your Gift</span>
+        <button id="menu-next">&rarr;</button>
+      </div>
+      <div id="preview-list">
+        <div id="preview-list">
+
+          <!-- Choco Category -->
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_1.png">
+            <img src="assets/icons/icon_choco_heart_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_2.png">
+            <img src="assets/icons/icon_choco_heart_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_3.png">
+            <img src="assets/icons/icon_choco_heart_3.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_1.png">
+            <img src="assets/icons/icon_choco_square_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_2.png">
+            <img src="assets/icons/icon_choco_square_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_3.png">
+            <img src="assets/icons/icon_choco_square_3.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_1.png">
+            <img src="assets/icons/icon_choco_round_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_2.png">
+            <img src="assets/icons/icon_choco_round_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_3.png">
+            <img src="assets/icons/icon_choco_round_3.png" alt="Decoration" />
+          </div>
+
+          <!-- Box Category -->
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_red.png">
+            <img src="assets/icons/icon_red.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_orange.png">
+            <img src="assets/icons/icon_orange.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_green.png">
+            <img src="assets/icons/icon_green.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_black.png">
+            <img src="assets/icons/icon_black.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_white.png">
+            <img src="assets/icons/icon_white.png" alt="Box" />
+          </div>
+
+          <!-- Gifts Category -->
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_1.png">
+            <img src="assets/icons/icon_gift_1.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_2.png">
+            <img src="assets/icons/icon_gift_2.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_3.png">
+            <img src="assets/icons/icon_gift_3.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_4.png">
+            <img src="assets/icons/icon_gift_4.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_5.png">
+            <img src="assets/icons/icon_gift_5.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_6.png">
+            <img src="assets/icons/icon_gift_6.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_7.png">
+            <img src="assets/icons/icon_gift_7.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_8.png">
+            <img src="assets/icons/icon_gift_8.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_9.png">
+            <img src="assets/icons/icon_gift_9.png" alt="Gift" />
+          </div>
+
+          <!-- Decor Category -->
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_1.png">
+            <img src="assets/icons/icon_decor_1.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_2.png">
+            <img src="assets/icons/icon_decor_2.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_3.png">
+            <img src="assets/icons/icon_decor_3.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_4.png">
+            <img src="assets/icons/icon_decor_4.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_5.png">
+            <img src="assets/icons/icon_decor_5.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_6.png">
+            <img src="assets/icons/icon_decor_6.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_7.png">
+            <img src="assets/icons/icon_decor_7.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_8.png">
+            <img src="assets/icons/icon_decor_8.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_9.png">
+            <img src="assets/icons/icon_decor_9.png" alt="Decor" />
+          </div>
+          
+
+          <!-- Background Category -->
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_black.png">
+            <img src="assets/icons/icon_black.png" alt="Background" />
+          </div>
+
+          <!-- Table Category -->
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_black.png">
+            <img src="assets/icons/icon_black.png" alt="Background" />
+          </div>
+
+          <!-- Note Category -->
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/none.png">
+            <img src="assets/icons/icon_none.png" alt="Background" />
+          </div>
+
+
+        </div>
+      </div>
+      <br><br>
+      <button id="randomize-btn">Randomize</button>
+    </div>
+
+    <!-- Center Panel: Canvas Area (Desktop) -->
+    <div id="center-panel">
+      <h1>Be My Valentine?</h1>
+      <br>
+      <p>Make your sweetheart a small gift to show them how special they are to you! <br> Then simply save it and send it to them.</p>
+      <br>
+      <canvas id="canvas" width="600" height="600"></canvas>
+      <button id="save-image">Save Image</button>
+    </div>
+
+    <!-- Right Panel: Text Editor (Desktop) -->
+    <div id="right-panel">
+      <h2>Text Editor</h2>
+      <textarea id="text-input" placeholder="Enter text here"></textarea>
+      
+      <!--<div class="control-group">
+        <label>Text Background:</label>
+        <div id="text-bg-options">
+          <div class="text-bg-item" data-value="none">None</div>
+          <div class="text-bg-item" data-value="yellow" style="background-color: yellow;">Yellow</div>
+          <div class="text-bg-item" data-value="blue" style="background-color: blue;">Blue</div>
+          <div class="text-bg-item" data-value="red" style="background-color: red;">Red</div>
+        </div>
+      </div> -->
+      
+      <div class="control-group">
+        <label>Text Color:</label>
+        <div id="text-color-options">
+          <div class="text-color-item" data-value="black" style="background-color: black;"></div>
+          <div class="text-color-item" data-value="white" style="background-color: white; border: 1px solid #ccc;"></div>
+          <div class="text-color-item" data-value="#1761CC" style="background-color: #1761CC;"></div>
+          <div class="text-color-item" data-value="#EF4B57" style="background-color: #EF4B57;"></div>
+          <div class="text-color-item" data-value="#FFCB48" style="background-color: #FFCB48;"></div>
+          <div class="text-color-item" data-value="#F467AC" style="background-color: #F467AC;"></div>
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <label>Text Size:</label>
+        <div id="text-size-options">
+          <div class="text-size-item" data-value="18">Small</div>
+          <div class="text-size-item selected" data-value="32">Medium</div>
+          <div class="text-size-item" data-value="60">Large</div>
+        </div>
+      </div>
+      <br>
+      <button id="add-text">Add Text</button>
+    </div>
+  </div>
+
+  <!-- Mobile Controls: Visible only on mobile (via CSS media queries) -->
+  <div id="mobile-controls">
+    <div class="tabs">
+      <button id="tab-decoration" class="active">Decoration</button>
+      <button id="tab-text">Text</button>
+    </div>
+    <div class="mobile-content">
+      <!-- Mobile Decoration Content -->
+      <div id="mobile-decoration" class="active">
+        <div class="menu">
+          <button id="mobile-menu-prev">&larr;</button>
+          <span id="menu-category">Decorate Your Gift</span>
+          <button id="mobile-menu-next">&rarr;</button>
+        </div>
+        <div id="mobile-preview-list">
+          <!-- Preview items arranged in a 3-column grid -->
+          
+          <!-- Choco Category -->
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_1.png">
+            <img src="assets/icons/icon_choco_heart_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_2.png">
+            <img src="assets/icons/icon_choco_heart_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_heart_3.png">
+            <img src="assets/icons/icon_choco_heart_3.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_1.png">
+            <img src="assets/icons/icon_choco_square_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_2.png">
+            <img src="assets/icons/icon_choco_square_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_square_3.png">
+            <img src="assets/icons/icon_choco_square_3.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_1.png">
+            <img src="assets/icons/icon_choco_round_1.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_2.png">
+            <img src="assets/icons/icon_choco_round_2.png" alt="Decoration" />
+          </div>
+          <div class="preview-item" data-category="Chocolate" data-type="Chocolate" data-src="assets/choco_round_3.png">
+            <img src="assets/icons/icon_choco_round_3.png" alt="Decoration" />
+          </div>
+
+          <!-- Box Category -->
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_red.png">
+            <img src="assets/icons/icon_red.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_orange.png">
+            <img src="assets/icons/icon_orange.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_green.png">
+            <img src="assets/icons/icon_green.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_black.png">
+            <img src="assets/icons/icon_black.png" alt="Box" />
+          </div>
+          <div class="preview-item" data-category="Box" data-type="Box" data-src="assets/box_white.png">
+            <img src="assets/icons/icon_white.png" alt="Box" />
+          </div>
+
+          <!-- Gifts Category -->
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_1.png">
+            <img src="assets/icons/icon_gift_1.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_2.png">
+            <img src="assets/icons/icon_gift_2.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_3.png">
+            <img src="assets/icons/icon_gift_3.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_4.png">
+            <img src="assets/icons/icon_gift_4.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_5.png">
+            <img src="assets/icons/icon_gift_5.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_6.png">
+            <img src="assets/icons/icon_gift_6.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_7.png">
+            <img src="assets/icons/icon_gift_7.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_8.png">
+            <img src="assets/icons/icon_gift_8.png" alt="Gift" />
+          </div>
+          <div class="preview-item" data-category="Gift" data-type="Gift" data-src="assets/gift_9.png">
+            <img src="assets/icons/icon_gift_9.png" alt="Gift" />
+          </div>
+
+          <!-- Decor Category -->
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_1.png">
+            <img src="assets/icons/icon_decor_1.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_2.png">
+            <img src="assets/icons/icon_decor_2.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_3.png">
+            <img src="assets/icons/icon_decor_3.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_4.png">
+            <img src="assets/icons/icon_decor_4.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_5.png">
+            <img src="assets/icons/icon_decor_5.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_6.png">
+            <img src="assets/icons/icon_decor_6.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_7.png">
+            <img src="assets/icons/icon_decor_7.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_8.png">
+            <img src="assets/icons/icon_decor_8.png" alt="Decor" />
+          </div>
+          <div class="preview-item" data-category="Decor" data-type="Decor" data-src="assets/decor_9.png">
+            <img src="assets/icons/icon_decor_9.png" alt="Decor" />
+          </div>
+          
+
+          <!-- Background Category -->
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Background" data-type="bgImage" data-src="assets/background_black.png">
+            <img src="assets/icons/icon_black.png" alt="Background" />
+          </div>
+
+          <!-- Table Category -->
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Table" data-type="Table" data-src="assets/table_black.png">
+            <img src="assets/icons/icon_black.png" alt="Background" />
+          </div>
+
+          <!-- Note Category -->
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_red.png">
+            <img src="assets/icons/icon_red.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_pink.png">
+            <img src="assets/icons/icon_pink.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_yellow.png">
+            <img src="assets/icons/icon_yellow.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_green.png">
+            <img src="assets/icons/icon_green.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_blue.png">
+            <img src="assets/icons/icon_blue.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/note_purple.png">
+            <img src="assets/icons/icon_purple.png" alt="Background" />
+          </div>
+          <div class="preview-item" data-category="Note" data-type="Note" data-src="assets/none.png">
+            <img src="assets/icons/icon_none.png" alt="Background" />
+          </div>
+
+
+        </div>
+        <button id="mobile-randomize-btn">Randomize</button>
+      </div>
+      
+      <!-- Mobile Text Content -->
+      <div id="mobile-text">
+        <h2>Text Editor</h2>
+        <textarea id="mobile-text-input" placeholder="Enter text here"></textarea>
+
+        <div class="control-group">
+          <label>Text Color:</label>
+          <div id="mobile-text-color-options">
+          <div class="text-color-item" data-value="black" style="background-color: black;"></div>
+          <div class="text-color-item" data-value="white" style="background-color: white;"></div>
+          <div class="text-color-item" data-value="#1761CC" style="background-color: #1761CC;"></div>
+          <div class="text-color-item" data-value="#EF4B57" style="background-color: #EF4B57;"></div>
+          <div class="text-color-item" data-value="#FFCB48" style="background-color: #FFCB48;"></div>
+          <div class="text-color-item" data-value="#F467AC" style="background-color: #F467AC;"></div>
+        </div>
+
+        <div class="control-group">
+          <label>Text Size:</label>
+          <div id="mobile-text-size-options">
+            <div class="text-size-item" data-value="18">Small</div>
+            <div class="text-size-item selected" data-value="32">Medium</div>
+            <div class="text-size-item" data-value="60">Large</div>
+          </div>
+        </div>
+        <button id="mobile-add-text">Add Text</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

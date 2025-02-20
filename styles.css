@@ -134,7 +134,8 @@ textarea {
 .gallery {
   display: grid;
   /* Creates a responsive grid: each column is minimum 200px, but can expand */
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  /*grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
+  grid-template-columns: auto auto auto auto;
   gap: 2rem; /* Space between squares */
   margin: 0.5rem 0; /* Some spacing around the gallery */
   margin-bottom: 2rem;

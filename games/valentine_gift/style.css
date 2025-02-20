@@ -1,0 +1,504 @@
+/* Reset defaults */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+.pacifico-regular {
+  font-family: "Pacifico", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.zain-regular {
+  font-family: "Zain", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.zain-bold {
+  font-family: "Zain", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.zain-regular-italic {
+  font-family: "Zain", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.fjalla-one-regular {
+  font-family: "Fjalla One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+h1{
+  font-family: Pacifico;
+  font-weight: 100px;
+  color:#CE157F;
+}
+
+
+h2,h3{
+  font-family: Pacifico;
+  margin-bottom: 10px;
+  color:#CE157F;
+}
+
+body{
+  font-family: Zain;
+  font-weight: 400;
+}
+
+/* Container layout using flexbox */
+#container {
+  display: flex;
+  height: 100vh;
+  background-color: #FFBBDC;
+}
+
+#mobile-controls {
+   display: none;
+  }
+
+/* Left and Right Sidebars */
+#right-panel {
+  width: 25%;
+  padding: 20px;
+  background-color: #FFBBDC;
+  overflow-y: auto;
+  position: relative;
+  align-items: center;
+}
+
+/* Center Panel */
+#center-panel {
+  flex: 1;
+  position: relative;
+  background-color: #FFD1F1;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+#center-panel h1{
+  font-size: 2.8em;
+  margin-bottom: -10px;
+  margin-top: -10px;
+}
+
+#center-panel p{
+  margin-bottom: -10px;
+}
+
+/* Canvas styling */
+#center-panel canvas {
+  border: 2px solid #333;
+  background-color: #fff;
+  width: 80%;            /* Fill container's width */
+  aspect-ratio: 1 / 1;    /* Maintain 1:1 ratio */
+  display: block;
+  margin: 0 auto;
+}
+
+/* Save button overlaid at the bottom center of the canvas */
+#save-image {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+
+}
+
+/* Left Panel styling */
+#left-panel {
+  width: 25%;
+  padding: 10px;
+  background-color: #FFBBDC;
+  overflow-y: auto;
+}
+
+/* Menu buttons styling */
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  color:#CE157F;
+}
+
+/* Randomize button styling */
+#randomize-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+/* Menu styling in left panel */
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 2em;
+  font-family: Pacifico;
+}
+
+#menu-prev,
+#menu-next {
+  background-color: #FFBBDC;
+  border: none;
+  font-size: 50px;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-family: "Fjalla One", serif;
+
+}
+
+#menu-category {
+  font-weight: bold;
+}
+
+/* Preview List as a grid with 2 columns */
+#preview-list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+}
+
+/* Each preview item is a square icon */
+.preview-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;  /* This makes the item square */
+  border: 3px solid #CE157F;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style for the preview item images */
+.preview-item img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.preview-item:hover {
+  background-color: #EF89C3;
+}
+
+/* Right panel controls */
+#right-panel {
+  text-align: left;
+}
+
+#right-panel h2 {
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+#right-panel input[type="text"] {
+  width: 100%;
+  height: 30%;
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+.control-group {
+  margin-bottom: 10px;
+}
+
+#right-panel select {
+  width: 100%;
+  padding: 5px;
+
+}
+
+/* Container for text background options */
+#text-bg-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.text-bg-item {
+  padding: 5px;
+  border: 1px solid #FFD2EE;
+  cursor: pointer;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Container for text color options */
+#text-color-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.text-color-item {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #FFD2EE;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Highlight selected options */
+.selected {
+  border: 2px solid #CE157F;
+}
+
+/* Text Size Options */
+#text-size-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.text-size-item {
+  padding: 5px;
+  border: 1px solid #FFD2EE;
+  cursor: pointer;
+  text-align: center;
+  flex: 1;
+  border-radius: 5px;
+}
+
+.text-size-item.selected {
+  border: 2px solid #CE157F;
+}
+
+/* Ensure your textarea is still styled as before */
+#right-panel textarea {
+  width: 90%;
+  min-height: 150px;
+  resize: both;
+  overflow: auto;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 1.4;
+  box-sizing: border-box;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+#add-text{
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #CE157F;
+  background-color: #FAAAD7;
+  color: #CE157F;
+
+}
+
+@media only screen and (max-width: 768px) {
+  /* Hide both mobile content sections by default */
+  #mobile-decoration,
+  #mobile-text {
+    display: none;
+  }
+
+  /* Only display the section that has the active class */
+  #mobile-decoration.active,
+  #mobile-text.active {
+    display: block;
+  }
+  /* Hide the desktop left and right panels */
+  #left-panel,
+  #right-panel {
+    display: none;
+  }
+  
+  /* Use a column layout for the entire container */
+  #container {
+    display: block;
+    flex-direction: column;
+    height: 65vh;
+    background-color: #FFD1F1;
+  }
+  
+  /* Top half: Canvas area */
+  #center-panel {
+    /* Optional: adjust padding/margins if needed */
+    flex: 1;
+    position: absolute;
+    background-color: #FFD1F1;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    }
+  #center-panel h1{
+    font-size: 2em;
+  }
+
+  #center-panel p{
+    line-height: 1em;
+  }
+  /* Bottom half: Mobile controls */
+  /* You can create a new container in your HTML with id="mobile-controls" 
+     or repurpose an existing one. */
+  #mobile-controls {
+    flex: 1;
+    background-color: #FFAED9;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0px;
+  }
+  
+  /* Tabs at the top of the bottom half */
+  #mobile-controls .tabs {
+    display: flex;
+    justify-content: center;
+    background-color: #FFAED9;
+  }
+  
+  #mobile-controls .tabs button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    background-color: #FFAED9;
+    cursor: pointer;
+    color: #FFD1F1;
+    font-family: "Pacifico";
+  }
+  
+  /* Active tab styling */
+  #mobile-controls .tabs button.active {
+    background-color: #FFD1F1;
+    color:#CE157F;
+    border: 2px solid #CE157F;
+  }
+  
+  /* Mobile content area */
+  #mobile-controls .mobile-content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  /* For the mobile decoration content, use a 3-column grid */
+  #mobile-preview-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  /* Adjust preview items (reduce icon size if needed) */
+  #mobile-preview-list .preview-item {
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Navigation arrow buttons in mobile (if applicable) */
+  #mobile-controls .nav-arrows {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px 0;
+  }
+  
+  #mobile-controls .nav-arrows button {
+    font-size: 24px;
+    padding: 12px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #FFBBDC;
+    font-family: "Fjalla One", serif;
+  
+  }
+
+  #mobile-text textarea {
+  width: 90%;
+  min-height: 150px;
+  resize: both;
+  overflow: auto;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 1.4;
+  box-sizing: border-box;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+  /* Container for text color options */
+#mobile-text-color-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.text-color-item {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.text-color-item.selected {
+  border: 2px solid #CE157F;
+}
+  #mobile-randomize-btn{
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  }
+
+  #mobile-add-text{
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  }
+
+  #save-image {
+  display: block;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  cursor: pointer;
+}
+}
