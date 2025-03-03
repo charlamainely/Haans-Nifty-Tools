@@ -135,6 +135,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  function loadAsset(category, type, src) {
+  console.log("Loading asset for", category, "from", src);
+  const assetImg = new Image();
+  assetImg.crossOrigin = 'anonymous'; // helps prevent CORS issues
+  assetImg.src = src;
+  assetImg.onload = function () {
+    decorations[category] = { type: type, image: assetImg };
+    renderCanvas();
+  };
+  assetImg.onerror = function () {
+    console.error("Failed to load asset:", src);
+  };
+}
+
+
   // ***********************
   // Randomize Button Functionality
   // ***********************
