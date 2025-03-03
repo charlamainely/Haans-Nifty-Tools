@@ -56,7 +56,6 @@
       padding: 0;
     }
     li {
-      background: #eee;
       margin: 5px 0;
       padding: 8px;
       display: flex;
@@ -107,6 +106,30 @@
   </style>
 </head>
 <body>
+  <header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
   <div class="container">
     <h1>Bill Splitter Enhanced</h1>
     <!-- Currency Selection -->

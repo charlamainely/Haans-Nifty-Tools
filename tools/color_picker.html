@@ -1,128 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Color Picker Generator</title>
-<link rel="stylesheet" href="../styles.css" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Picker Generator</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
     body {
-        text-align: center;
+      text-align: center;
     }
-
     input[type="color"] {
-        width: 40px;
-        height: 40px;
+      width: 40px;
+      height: 40px;
     }
     .arrow {
-        cursor: pointer;
+      cursor: pointer;
+      padding: 0 5px;
     }
-</style>
+    .colorRow {
+      margin: 10px 0;
+    }
+    .savedPalette {
+      display: inline-block;
+      margin: 5px;
+      border: 1px solid #ccc;
+      padding: 5px;
+      background-color: hsla(46,6%,92%,0.8);
+    }
+    .savedColor {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      margin: 2px;
+      vertical-align: middle;
+      border: 1px solid #000;
+    }
+    #schemeDescription {
+      font-style: italic;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-  <nav class="navbar">
-    <!-- Logo or site title -->
-    <div class="logo">Haaan's Nifty Gadgets</div>
-
-    <!-- The hidden checkbox that will control our nav -->
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-
-    <!-- The hamburger button that appears on mobile -->
-    <label for="nav-toggle" class="nav-toggle-label">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-
-    <!-- The main navigation menu -->
-    <ul class="nav-menu">
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
-      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
-      <!-- Add more tools or links as needed -->
-    </ul>
-  </nav>
-</header>
-<main>
+  <header>
+    <nav class="navbar">
+      <!-- Logo or site title -->
+      <div class="logo">Haaan's Nifty Gadgets</div>
+      <!-- The hidden checkbox that will control our nav -->
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <!-- The hamburger button that appears on mobile -->
+      <label for="nav-toggle" class="nav-toggle-label">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+      <!-- The main navigation menu -->
+      <ul class="nav-menu">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+        <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
     <h1>Color Picker Generator</h1>
+    <!-- Controls for dynamic colors and scheme selection -->
+    <div>
+      <button onclick="addColor()">Add Color</button>
+      <button onclick="removeColor()">Remove Color</button>
+    </div>
+    <div style="margin: 10px 0;">
+      <label for="colorScheme">Color Scheme: </label>
+      <select id="colorScheme" onchange="updateSchemeDescription()">
+        <option value="random">Random</option>
+        <option value="monochromatic">Monochromatic</option>
+        <option value="analogous">Analogous</option>
+        <option value="complementary">Complementary</option>
+        <option value="split">Split Complementary</option>
+        <option value="triadic">Triadic</option>
+        <option value="square">Square</option>
+        <option value="rectangle">Rectangle</option>
+      </select>
+      <p id="schemeDescription"></p>
+    </div>
+    <!-- Container for color pickers -->
     <div id="colorList">
+      <div class="colorRow">
         <input type="color" value="#ff0000">
         <span class="arrow" onclick="moveColorUp(0)">▲</span>
         <span class="arrow" onclick="moveColorDown(0)">▼</span>
         <input type="checkbox" id="lockColor0" onchange="toggleLockColor(0)">
-        <label for="lockColor0">Lock Color</label><br>
-
+        <label for="lockColor0">Lock Color</label>
+      </div>
+      <div class="colorRow">
         <input type="color" value="#00ff00">
         <span class="arrow" onclick="moveColorUp(1)">▲</span>
         <span class="arrow" onclick="moveColorDown(1)">▼</span>
         <input type="checkbox" id="lockColor1" onchange="toggleLockColor(1)">
-        <label for="lockColor1">Lock Color</label><br>
-
+        <label for="lockColor1">Lock Color</label>
+      </div>
+      <div class="colorRow">
         <input type="color" value="#0000ff">
         <span class="arrow" onclick="moveColorUp(2)">▲</span>
         <span class="arrow" onclick="moveColorDown(2)">▼</span>
         <input type="checkbox" id="lockColor2" onchange="toggleLockColor(2)">
-        <label for="lockColor2">Lock Color</label><br>
-
+        <label for="lockColor2">Lock Color</label>
+      </div>
+      <div class="colorRow">
         <input type="color" value="#ffff00">
         <span class="arrow" onclick="moveColorUp(3)">▲</span>
         <span class="arrow" onclick="moveColorDown(3)">▼</span>
         <input type="checkbox" id="lockColor3" onchange="toggleLockColor(3)">
         <label for="lockColor3">Lock Color</label>
+      </div>
     </div>
     <br>
     <button onclick="randomizeColors()">Randomize Colors</button>
+    <button onclick="savePalette()">Save Palette</button>
     <br>
     <p id="colorText"></p>
-</main>
-    <script>
-        const colors = document.querySelectorAll('#colorList input[type="color"]');
-        const lockCheckboxes = document.querySelectorAll('#colorList input[type="checkbox"]');
-
-        function moveColorUp(index) {
-            if (index > 0) {
-                const temp = colors[index].value;
-                colors[index].value = colors[index - 1].value;
-                colors[index - 1].value = temp;
-                generateColors();
-            }
-        }
-
-        function moveColorDown(index) {
-            if (index < colors.length - 1) {
-                const temp = colors[index].value;
-                colors[index].value = colors[index + 1].value;
-                colors[index + 1].value = temp;
-                generateColors();
-            }
-        }
-
-        function toggleLockColor(index) {
-            colors[index].disabled = lockCheckboxes[index].checked;
-        }
-
-        function randomizeColors() {
-            colors.forEach((input, index) => {
-                if (!lockCheckboxes[index].checked) {
-                    input.value = getRandomColor();
-                }
-            });
-            generateColors();
-        }
-
-        function generateColors() {
-            const colorsText = Array.from(colors).map(input => input.value).join(', ');
-            document.getElementById('colorText').textContent = colorsText;
-        }
-
-        function getRandomColor() {
-            return '#' + Math.floor(Math.random() * 16777215).toString(16);
-        }
-    </script>
+    <hr>
+    <div id="savedPalettes">
+      <h2>Saved Palettes</h2>
+    </div>
+  </main>
+  <script>
+    // Helper: Convert HSL to Hex
+    function hslToHex(h, s, l) {
+      s /= 100;
+      l /= 100;
+      let c = (1 - Math.abs(2 * l - 1)) * s,
+          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+          m = l - c/2,
+          r = 0, g = 0, b = 0;
+      if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+      else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+      else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+      else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+      else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+      else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+      r = Math.round((r + m) * 255);
+      g = Math.round((g + m) * 255);
+      b = Math.round((b + m) * 255);
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+    
+    // Generates a random hex color
+    function getRandomColor() {
+      return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    }
+    
+    // Generate colors based on selected color scheme
+    function generateSchemeColors(scheme) {
+      let baseHue = Math.floor(Math.random() * 360);
+      const s = 70; // saturation
+      const l = 50; // lightness
+      let colors = [];
+      switch(scheme) {
+        case "monochromatic":
+          // Four variations with the same hue but different lightness
+          colors.push(hslToHex(baseHue, s, 40));
+          colors.push(hslToHex(baseHue, s, 50));
+          colors.push(hslToHex(baseHue, s, 60));
+          colors.push(hslToHex(baseHue, s, 70));
+          break;
+        case "analogous":
+          colors.push(hslToHex((baseHue - 30 + 360) % 360, s, l));
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 30) % 360, s, l));
+          break;
+        case "complementary":
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 180) % 360, s, l));
+          break;
+        case "split":
+          // Split complementary: base and the two colors adjacent to its complement
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 150) % 360, s, l));
+          colors.push(hslToHex((baseHue + 210) % 360, s, l));
+          break;
+        case "triadic":
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 120) % 360, s, l));
+          colors.push(hslToHex((baseHue + 240) % 360, s, l));
+          break;
+        case "square":
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 90) % 360, s, l));
+          colors.push(hslToHex((baseHue + 180) % 360, s, l));
+          colors.push(hslToHex((baseHue + 270) % 360, s, l));
+          break;
+        case "rectangle":
+          // Rectangle (Tetradic): two complementary pairs with a 60° offset between them
+          colors.push(hslToHex(baseHue, s, l));
+          colors.push(hslToHex((baseHue + 60) % 360, s, l));
+          colors.push(hslToHex((baseHue + 180) % 360, s, l));
+          colors.push(hslToHex((baseHue + 240) % 360, s, l));
+          break;
+        default:
+          colors = [];
+      }
+      return colors;
+    }
+    
+    // Updates the description text based on the selected scheme
+    function updateSchemeDescription() {
+      const scheme = document.getElementById('colorScheme').value;
+      const description = document.getElementById('schemeDescription');
+      let text = "";
+      switch(scheme) {
+        case "monochromatic":
+          text = "Monochromatic: Uses variations in lightness and saturation of a single hue.";
+          break;
+        case "analogous":
+          text = "Analogous: Colors that are next to each other on the color wheel for a harmonious look.";
+          break;
+        case "complementary":
+          text = "Complementary: Uses two colors opposite each other on the color wheel for high contrast.";
+          break;
+        case "split":
+          text = "Split Complementary: A base color with two adjacent to its complement, balancing contrast.";
+          break;
+        case "triadic":
+          text = "Triadic: Three colors evenly spaced around the color wheel for a vibrant palette.";
+          break;
+        case "square":
+          text = "Square: Four evenly spaced colors creating a dynamic yet balanced scheme.";
+          break;
+        case "rectangle":
+          text = "Rectangle (Tetradic): Four colors forming two complementary pairs with a complex balance.";
+          break;
+        default:
+          text = "";
+      }
+      description.textContent = text;
+    }
+    
+    // Refreshes the indexes and event handlers for each color row
+    function refreshColorRows() {
+      const rows = document.querySelectorAll('#colorList .colorRow');
+      rows.forEach((row, index) => {
+        // Update the arrow onclick functions
+        const arrows = row.querySelectorAll('.arrow');
+        arrows[0].setAttribute('onclick', `moveColorUp(${index})`);
+        arrows[1].setAttribute('onclick', `moveColorDown(${index})`);
+        // Update the checkbox id and label for attribute
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        checkbox.setAttribute('id', 'lockColor' + index);
+        checkbox.setAttribute('onchange', `toggleLockColor(${index})`);
+        const label = row.querySelector('label');
+        label.setAttribute('for', 'lockColor' + index);
+      });
+      generateColors();
+    }
+    
+    // Adds a new color row with a default random color
+    function addColor() {
+      const colorList = document.getElementById('colorList');
+      const newRow = document.createElement('div');
+      newRow.className = 'colorRow';
+      // Create the inner HTML for the new row
+      newRow.innerHTML = `
+        <input type="color" value="${getRandomColor()}">
+        <span class="arrow" onclick="">▲</span>
+        <span class="arrow" onclick="">▼</span>
+        <input type="checkbox">
+        <label>Lock Color</label>
+      `;
+      colorList.appendChild(newRow);
+      refreshColorRows();
+    }
+    
+    // Removes the last color row if more than one exists
+    function removeColor() {
+      const colorList = document.getElementById('colorList');
+      if (colorList.children.length > 1) {
+        colorList.removeChild(colorList.lastElementChild);
+        refreshColorRows();
+      }
+    }
+    
+    // Moves a color row up
+    function moveColorUp(index) {
+      const colorList = document.getElementById('colorList');
+      const rows = colorList.children;
+      if (index > 0) {
+        colorList.insertBefore(rows[index], rows[index - 1]);
+        refreshColorRows();
+      }
+    }
+    
+    // Moves a color row down
+    function moveColorDown(index) {
+      const colorList = document.getElementById('colorList');
+      const rows = colorList.children;
+      if (index < rows.length - 1) {
+        colorList.insertBefore(rows[index + 1], rows[index]);
+        refreshColorRows();
+      }
+    }
+    
+    // Toggle lock for a color row
+    function toggleLockColor(index) {
+      const row = document.querySelectorAll('#colorList .colorRow')[index];
+      const colorInput = row.querySelector('input[type="color"]');
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      colorInput.disabled = checkbox.checked;
+    }
+    
+    // Randomizes colors based on current scheme selection
+    function randomizeColors() {
+      const scheme = document.getElementById('colorScheme').value;
+      const colorList = document.getElementById('colorList');
+      if (scheme === "random") {
+        // For random, update each color if not locked.
+        const rows = document.querySelectorAll('#colorList .colorRow');
+        rows.forEach(row => {
+          const colorInput = row.querySelector('input[type="color"]');
+          const checkbox = row.querySelector('input[type="checkbox"]');
+          if (!checkbox.checked) {
+            colorInput.value = getRandomColor();
+          }
+        });
+      } else {
+        // For scheme-based, generate a new palette and rebuild the colorList.
+        const schemeColors = generateSchemeColors(scheme);
+        // Clear existing rows.
+        colorList.innerHTML = '';
+        schemeColors.forEach(col => {
+          const newRow = document.createElement('div');
+          newRow.className = 'colorRow';
+          newRow.innerHTML = `
+            <input type="color" value="${col}">
+            <span class="arrow" onclick="">▲</span>
+            <span class="arrow" onclick="">▼</span>
+            <input type="checkbox">
+            <label>Lock Color</label>
+          `;
+          colorList.appendChild(newRow);
+        });
+      }
+      refreshColorRows();
+    }
+    
+    // Generates a text list of the current colors
+    function generateColors() {
+      const rows = document.querySelectorAll('#colorList .colorRow');
+      const colorValues = Array.from(rows).map(row => row.querySelector('input[type="color"]').value);
+      document.getElementById('colorText').textContent = colorValues.join(', ');
+    }
+    
+    // Saves the current palette and displays it in the savedPalettes container
+    function savePalette() {
+      const rows = document.querySelectorAll('#colorList .colorRow');
+      const colorValues = Array.from(rows).map(row => row.querySelector('input[type="color"]').value);
+      const savedPalettes = document.getElementById('savedPalettes');
+      
+      const paletteDiv = document.createElement('div');
+      paletteDiv.className = 'savedPalette';
+      
+      // Create a visual representation of each color
+      colorValues.forEach(color => {
+        const colorBox = document.createElement('div');
+        colorBox.className = 'savedColor';
+        colorBox.style.backgroundColor = color;
+        paletteDiv.appendChild(colorBox);
+      });
+      
+      // Also add the text representation
+      const text = document.createElement('div');
+      text.textContent = colorValues.join(', ');
+      paletteDiv.appendChild(text);
+      
+      savedPalettes.appendChild(paletteDiv);
+    }
+    
+    // Initial call to set up indexes, display, and scheme description
+    refreshColorRows();
+    updateSchemeDescription();
+  </script>
 </body>
 </html>
