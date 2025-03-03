@@ -40,10 +40,17 @@
       margin: 2px;
       vertical-align: middle;
       border: 1px solid #000;
+
     }
     #schemeDescription {
       font-style: italic;
       margin-top: 5px;
+    }
+    .colorsContainer {
+      margin-bottom: 5px;
+    }
+    .paletteText {
+      margin-bottom: 5px;
     }
   </style>
 </head>
@@ -149,6 +156,18 @@
       g = Math.round((g + m) * 255);
       b = Math.round((b + m) * 255);
       return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+    
+    // Helper: Convert an RGB string (e.g., "rgb(255, 0, 0)") to hex (e.g., "#ff0000")
+    function rgbToHex(rgb) {
+      // If already in hex format, return as is.
+      if (rgb.indexOf('#') === 0) return rgb;
+      const result = rgb.match(/\d+/g);
+      if (!result) return "#000000";
+      return "#" + result.slice(0,3).map(x => {
+        let hex = parseInt(x).toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }).join('');
     }
     
     // Generates a random hex color
@@ -265,7 +284,6 @@
       const colorList = document.getElementById('colorList');
       const newRow = document.createElement('div');
       newRow.className = 'colorRow';
-      // Create the inner HTML for the new row
       newRow.innerHTML = `
         <input type="color" value="${getRandomColor()}">
         <span class="arrow" onclick="">▲</span>
@@ -331,7 +349,6 @@
       } else {
         // For scheme-based, generate a new palette and rebuild the colorList.
         const schemeColors = generateSchemeColors(scheme);
-        // Clear existing rows.
         colorList.innerHTML = '';
         schemeColors.forEach(col => {
           const newRow = document.createElement('div');
@@ -356,7 +373,7 @@
       document.getElementById('colorText').textContent = colorValues.join(', ');
     }
     
-    // Saves the current palette and displays it in the savedPalettes container
+    // Saves the current palette and displays it with Edit and Remove options
     function savePalette() {
       const rows = document.querySelectorAll('#colorList .colorRow');
       const colorValues = Array.from(rows).map(row => row.querySelector('input[type="color"]').value);
@@ -365,23 +382,75 @@
       const paletteDiv = document.createElement('div');
       paletteDiv.className = 'savedPalette';
       
-      // Create a visual representation of each color
+      const colorsContainer = document.createElement('div');
+      colorsContainer.className = 'colorsContainer';
       colorValues.forEach(color => {
         const colorBox = document.createElement('div');
         colorBox.className = 'savedColor';
         colorBox.style.backgroundColor = color;
-        paletteDiv.appendChild(colorBox);
+        colorsContainer.appendChild(colorBox);
       });
+      paletteDiv.appendChild(colorsContainer);
       
-      // Also add the text representation
       const text = document.createElement('div');
+      text.className = 'paletteText';
       text.textContent = colorValues.join(', ');
       paletteDiv.appendChild(text);
+      
+      const editButton = document.createElement('button');
+      editButton.textContent = "Edit";
+      editButton.onclick = function() { editPalette(this); };
+      paletteDiv.appendChild(editButton);
+      
+      const removeButton = document.createElement('button');
+      removeButton.textContent = "Remove";
+      removeButton.onclick = function() { removePalette(this); };
+      paletteDiv.appendChild(removeButton);
       
       savedPalettes.appendChild(paletteDiv);
     }
     
-    // Initial call to set up indexes, display, and scheme description
+    // Removes a saved palette from the list
+    function removePalette(button) {
+      const paletteDiv = button.parentNode;
+      paletteDiv.parentNode.removeChild(paletteDiv);
+    }
+    
+    // Toggles editing mode for a saved palette.
+    // In edit mode, the color swatches are replaced by color inputs.
+    function editPalette(button) {
+      const paletteDiv = button.parentNode;
+      const colorsContainer = paletteDiv.querySelector('.colorsContainer');
+      
+      if (button.textContent === "Edit") {
+        // Switch to edit mode: replace each savedColor div with an input[type="color"]
+        const colorDivs = colorsContainer.querySelectorAll('.savedColor');
+        colorDivs.forEach(div => {
+          let currentColor = rgbToHex(div.style.backgroundColor);
+          const input = document.createElement('input');
+          input.type = 'color';
+          input.value = currentColor;
+          div.parentNode.replaceChild(input, div);
+        });
+        button.textContent = "Save";
+      } else {
+        // Save mode: replace each input with a div and update the text.
+        const inputs = colorsContainer.querySelectorAll('input[type="color"]');
+        let hexValues = [];
+        inputs.forEach(input => {
+          hexValues.push(input.value);
+          const newDiv = document.createElement('div');
+          newDiv.className = 'savedColor';
+          newDiv.style.backgroundColor = input.value;
+          input.parentNode.replaceChild(newDiv, input);
+        });
+        const text = paletteDiv.querySelector('.paletteText');
+        text.textContent = hexValues.join(', ');
+        button.textContent = "Edit";
+      }
+    }
+    
+    // Initial setup
     refreshColorRows();
     updateSchemeDescription();
   </script>
