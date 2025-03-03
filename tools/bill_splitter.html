@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Splitter Enhanced with Itemized Option</title>
+  <style>
+    /* Basic styling and responsiveness */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1, h2, h3, h4 {
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007BFF;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #eee;
+      margin: 5px 0;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 4px;
+    }
+    .bill-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    @media (max-width: 600px) {
+      button {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bill Splitter Enhanced</h1>
+
+    <!-- Participants Section -->
+    <div class="section" id="participants-section">
+      <h2>Participants</h2>
+      <div>
+        <input type="text" id="participant-input" placeholder="Enter participant name">
+        <button type="button" onclick="addParticipant()">Add Participant</button>
+      </div>
+      <ul id="participants-list">
+        <!-- List of participants will be displayed here -->
+      </ul>
+    </div>
+
+    <!-- Bill Form Section -->
+    <div class="section" id="bill-form-section">
+      <h2>Add / Edit Bill</h2>
+      <form id="bill-form" onsubmit="return false;">
+         <!-- Bill Type Selection -->
+         <div>
+           <label for="bill-type">Bill Type:</label>
+           <select id="bill-type" onchange="toggleBillType()">
+              <option value="simple">Simple Bill</option>
+              <option value="itemized">Itemized Bill</option>
+           </select>
+         </div>
+
+         <div>
+           <label for="bill-name">Bill Name/Description:</label>
+           <input type="text" id="bill-name" placeholder="Enter bill description" required>
+         </div>
+         
+         <!-- Paid By: Common to both bill types -->
+         <div>
+           <label for="payer-select">Paid By:</label>
+           <select id="payer-select" required></select>
+         </div>
+
+         <!-- Simple Bill Section -->
+         <div id="simple-section">
+           <div>
+             <label for="bill-amount">Total Amount:</label>
+             <input type="number" id="bill-amount" placeholder="Enter total amount" step="0.01" required>
+           </div>
+           <div>
+             <label for="split-method">Split Method:</label>
+             <select id="split-method" onchange="toggleSplitInputs()">
+               <option value="even">Evenly</option>
+               <option value="exact">Exact Amounts</option>
+               <option value="percent">Percentages</option>
+               <option value="custom">Custom Ratios</option>
+             </select>
+           </div>
+           <div id="split-inputs"></div>
+         </div>
+
+         <!-- Itemized Bill Section -->
+         <div id="itemized-section" style="display:none;">
+           <h3>Itemized Items</h3>
+           <div id="item-form">
+             <div>
+               <label for="item-desc">Item Description:</label>
+               <input type="text" id="item-desc" placeholder="Item description">
+             </div>
+             <div>
+               <label for="item-pretax">Pre-Tax Price:</label>
+               <input type="number" id="item-pretax" placeholder="Pre-tax price" step="0.01">
+             </div>
+             <div>
+               <label for="item-allocation">Allocation Type:</label>
+               <select id="item-allocation" onchange="toggleItemAllocation()">
+                 <option value="shared">Shared</option>
+                 <option value="individual">Individual</option>
+               </select>
+             </div>
+             <div id="item-allocation-selection">
+               <!-- Allocation options will be generated here -->
+             </div>
+             <button type="button" onclick="addItem()">Add Item</button>
+           </div>
+           <div>
+             <h4>Items List:</h4>
+             <ul id="items-list"></ul>
+           </div>
+           <div>
+             <label for="overall-total">Overall Bill Total (After Tax):</label>
+             <input type="number" id="overall-total" placeholder="Enter overall total after tax" step="0.01" required>
+           </div>
+         </div>
+
+         <button type="button" onclick="saveBill()">Save Bill</button>
+         <button type="button" onclick="resetBillForm()">Reset</button>
+      </form>
+    </div>
+
+    <!-- Bills List Section -->
+    <div class="section" id="bills-section">
+      <h2>Bills</h2>
+      <div id="bills-list">
+        <!-- List of bills will appear here -->
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="section" id="summary-section">
+      <h2>Summary</h2>
+      <table id="summary-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Owed (+) / Owes (-)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Summary rows -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Global arrays and counters
+    let participants = []; // each: { id, name }
+    let participantIdCounter = 1;
+    let bills = []; // each bill will include details and splitValues
+    let billIdCounter = 1;
+    let editBillId = null; // for editing an existing bill
+
+    // For itemized bill: current list of items
+    let currentBillItems = []; // each: { id, description, preTax, allocationType, allocation }
+    let itemIdCounter = 1;
+
+    // ---------------------- Participants Section ----------------------
+    function updateParticipantsUI() {
+      const listEl = document.getElementById('participants-list');
+      listEl.innerHTML = '';
+      participants.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p.name;
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => editParticipant(p.id);
+        // Remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => removeParticipant(p.id);
+        li.appendChild(editBtn);
+        li.appendChild(removeBtn);
+        listEl.appendChild(li);
+      });
+      updatePayerOptions();
+      toggleSplitInputs();
+      updateItemAllocationSelection();
+    }
+    function addParticipant() {
+      const input = document.getElementById('participant-input');
+      const name = input.value.trim();
+      if (name === "") return;
+      participants.push({ id: participantIdCounter++, name });
+      input.value = "";
+      updateParticipantsUI();
+    }
+    function editParticipant(id) {
+      const participant = participants.find(p => p.id === id);
+      if (!participant) return;
+      const newName = prompt("Edit participant name:", participant.name);
+      if (newName && newName.trim() !== "") {
+        participant.name = newName.trim();
+        updateParticipantsUI();
+        updateBillsUI();
+        updateSummary();
+      }
+    }
+    function removeParticipant(id) {
+      if (bills.length > 0 && !confirm("Removing a participant might affect existing bills. Proceed?")) return;
+      participants = participants.filter(p => p.id !== id);
+      bills.forEach(bill => {
+        if (bill.splitValues) {
+          delete bill.splitValues[id];
+        }
+        if (bill.payer === id) {
+          bill.payer = null;
+        }
+      });
+      updateParticipantsUI();
+      updateBillsUI();
+      updateSummary();
+    }
+    function updatePayerOptions() {
+      const payerSelect = document.getElementById('payer-select');
+      payerSelect.innerHTML = '';
+      participants.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = p.name;
+        payerSelect.appendChild(option);
+      });
+    }
+
+    // ---------------------- Bill Form Section ----------------------
+    // Toggle between simple and itemized bill sections
+    function toggleBillType() {
+      const billType = document.getElementById('bill-type').value;
+      if (billType === 'simple') {
+        document.getElementById('simple-section').style.display = 'block';
+        document.getElementById('itemized-section').style.display = 'none';
+      } else if (billType === 'itemized') {
+        document.getElementById('simple-section').style.display = 'none';
+        document.getElementById('itemized-section').style.display = 'block';
+      }
+    }
+    
+    // For simple bill: Toggle split inputs (exact, percent, custom)
+    function toggleSplitInputs() {
+      const method = document.getElementById('split-method').value;
+      const container = document.getElementById('split-inputs');
+      container.innerHTML = '';
+      if (method === 'even') return;
+      participants.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'split-input';
+        let labelText = "";
+        if (method === 'exact') {
+          labelText = `Exact amount for ${p.name}:`;
+        } else if (method === 'percent') {
+          labelText = `Percentage for ${p.name}:`;
+        } else if (method === 'custom') {
+          labelText = `Custom ratio for ${p.name}:`;
+        }
+        div.innerHTML = `<label>${labelText}</label>
+          <input type="number" step="0.01" data-participant-id="${p.id}" placeholder="${method === 'percent' ? 'Percentage' : (method === 'custom' ? 'Ratio' : 'Amount')}" required>`;
+        container.appendChild(div);
+      });
+    }
+
+    // ---------------------- Itemized Bill Section ----------------------
+    // Update allocation options (dropdown for individual, checkboxes for shared)
+    function updateItemAllocationSelection() {
+      const container = document.getElementById('item-allocation-selection');
+      container.innerHTML = '';
+      const allocationType = document.getElementById('item-allocation').value;
+      if (allocationType === 'individual') {
+        let select = document.createElement('select');
+        select.id = 'item-individual-select';
+        participants.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.id;
+          option.textContent = p.name;
+          select.appendChild(option);
+        });
+        container.appendChild(select);
+      } else if (allocationType === 'shared') {
+        participants.forEach(p => {
+          let label = document.createElement('label');
+          label.style.marginRight = '10px';
+          let checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = p.id;
+          checkbox.className = 'item-shared-checkbox';
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(p.name));
+          container.appendChild(label);
+        });
+      }
+    }
+    function toggleItemAllocation() {
+      updateItemAllocationSelection();
+    }
+    
+    // Add an item to the current itemized bill
+    function addItem() {
+      const desc = document.getElementById('item-desc').value.trim();
+      const preTax = parseFloat(document.getElementById('item-pretax').value);
+      const allocationType = document.getElementById('item-allocation').value;
+      if (!desc || isNaN(preTax)) {
+        alert("Please provide a valid item description and pre-tax price.");
+        return;
+      }
+      let allocation;
+      if (allocationType === 'individual') {
+        const select = document.getElementById('item-individual-select');
+        if (!select || !select.value) {
+          alert("Please select a participant for individual allocation.");
+          return;
+        }
+        allocation = parseInt(select.value);
+      } else if (allocationType === 'shared') {
+        const checkboxes = document.querySelectorAll('.item-shared-checkbox');
+        allocation = [];
+        checkboxes.forEach(cb => {
+          if (cb.checked) {
+            allocation.push(parseInt(cb.value));
+          }
+        });
+        if (allocation.length === 0) {
+          alert("Please select at least one participant for shared allocation.");
+          return;
+        }
+      }
+      const item = { id: itemIdCounter++, description: desc, preTax, allocationType, allocation };
+      currentBillItems.push(item);
+      updateItemsList();
+      // Reset item form inputs
+      document.getElementById('item-desc').value = "";
+      document.getElementById('item-pretax').value = "";
+    }
+    // Update the list of itemized items
+    function updateItemsList() {
+      const list = document.getElementById('items-list');
+      list.innerHTML = '';
+      currentBillItems.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.description} - $${item.preTax.toFixed(2)} - ${item.allocationType === 'individual' ? 'Individual (' + (participants.find(p => p.id === item.allocation)?.name || 'N/A') + ')' : 'Shared'}`;
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => {
+          currentBillItems = currentBillItems.filter(i => i.id !== item.id);
+          updateItemsList();
+        };
+        li.appendChild(removeBtn);
+        list.appendChild(li);
+      });
+    }
+    
+    // ---------------------- Save Bill Function ----------------------
+    function saveBill() {
+      const billType = document.getElementById('bill-type').value;
+      const billName = document.getElementById('bill-name').value.trim();
+      if (billName === "") {
+        alert("Please enter a bill name/description.");
+        return;
+      }
+      let splitValues = {}; // key: participantId, value: share amount
+      // Common: get the payer from the common "Paid By" field
+      const payer = document.getElementById('payer-select').value ? parseInt(document.getElementById('payer-select').value) : null;
+      if (!payer) {
+        alert("Please select who paid for the bill.");
+        return;
+      }
+      if (billType === 'simple') {
+        const billAmount = parseFloat(document.getElementById('bill-amount').value);
+        const splitMethod = document.getElementById('split-method').value;
+        if (isNaN(billAmount)) {
+          alert("Please fill in all required bill details.");
+          return;
+        }
+        if (splitMethod === 'even') {
+          const count = participants.length;
+          const share = billAmount / count;
+          participants.forEach(p => {
+            splitValues[p.id] = share;
+          });
+        } else {
+          const inputs = document.querySelectorAll('#split-inputs input');
+          let values = {};
+          inputs.forEach(input => {
+            const pid = parseInt(input.getAttribute('data-participant-id'));
+            values[pid] = parseFloat(input.value);
+          });
+          if (splitMethod === 'percent') {
+            participants.forEach(p => {
+              splitValues[p.id] = billAmount * (values[p.id] / 100);
+            });
+          } else if (splitMethod === 'custom') {
+            let totalRatio = 0;
+            for (const pid in values) {
+              totalRatio += values[pid];
+            }
+            participants.forEach(p => {
+              splitValues[p.id] = billAmount * (values[p.id] / totalRatio);
+            });
+          } else if (splitMethod === 'exact') {
+            participants.forEach(p => {
+              splitValues[p.id] = values[p.id];
+            });
+          }
+        }
+        const bill = { id: billIdCounter++, type: 'simple', name: billName, amount: billAmount, payer, splitMethod, splitValues };
+        if (editBillId !== null) {
+          const index = bills.findIndex(b => b.id === editBillId);
+          if (index !== -1) {
+            bills[index] = bill;
+          }
+          editBillId = null;
+        } else {
+          bills.push(bill);
+        }
+      } else if (billType === 'itemized') {
+        if (currentBillItems.length === 0) {
+          alert("Please add at least one item.");
+          return;
+        }
+        const overallTotal = parseFloat(document.getElementById('overall-total').value);
+        if (isNaN(overallTotal)) {
+          alert("Please enter the overall bill total (after tax).");
+          return;
+        }
+        // Sum up pre-tax prices from all items and calculate tax multiplier
+        let preTaxSum = 0;
+        currentBillItems.forEach(item => {
+          preTaxSum += item.preTax;
+        });
+        const taxMultiplier = overallTotal / preTaxSum;
+        // Initialize each participant's split value to 0
+        participants.forEach(p => {
+          splitValues[p.id] = 0;
+        });
+        // For each item, calculate the after-tax cost and assign accordingly
+        currentBillItems.forEach(item => {
+          const afterTaxCost = item.preTax * taxMultiplier;
+          if (item.allocationType === 'individual') {
+            splitValues[item.allocation] += afterTaxCost;
+          } else if (item.allocationType === 'shared') {
+            const numShared = item.allocation.length;
+            const share = afterTaxCost / numShared;
+            item.allocation.forEach(pid => {
+              splitValues[pid] += share;
+            });
+          }
+        });
+        const bill = { id: billIdCounter++, type: 'itemized', name: billName, overallTotal, payer, items: [...currentBillItems], splitValues };
+        if (editBillId !== null) {
+          const index = bills.findIndex(b => b.id === editBillId);
+          if (index !== -1) {
+            bills[index] = bill;
+          }
+          editBillId = null;
+        } else {
+          bills.push(bill);
+        }
+        // Clear the current itemized items
+        currentBillItems = [];
+        updateItemsList();
+      }
+      resetBillForm();
+      updateBillsUI();
+      updateSummary();
+    }
+    
+    function resetBillForm() {
+      document.getElementById('bill-form').reset();
+      document.getElementById('split-inputs').innerHTML = '';
+      currentBillItems = [];
+      updateItemsList();
+      editBillId = null;
+      toggleBillType();
+    }
+    
+    // ---------------------- Bills List & Summary ----------------------
+    function updateBillsUI() {
+      const billsContainer = document.getElementById('bills-list');
+      billsContainer.innerHTML = '';
+      bills.forEach(bill => {
+        const div = document.createElement('div');
+        div.className = 'bill-item';
+        let billInfo = `<strong>${bill.name}</strong>`;
+        if (bill.type === 'simple') {
+          const payerName = participants.find(p => p.id === bill.payer)?.name || 'N/A';
+          billInfo += ` - Amount: $${bill.amount.toFixed(2)} - Paid by: ${payerName} - Method: ${bill.splitMethod}`;
+        } else if (bill.type === 'itemized') {
+          const payerName = participants.find(p => p.id === bill.payer)?.name || 'N/A';
+          billInfo += ` - Overall Total: $${bill.overallTotal.toFixed(2)} - Paid by: ${payerName} - Itemized`;
+        }
+        div.innerHTML = billInfo;
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => loadBillForEditing(bill.id);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => {
+          if (confirm("Delete this bill?")) {
+            bills = bills.filter(b => b.id !== bill.id);
+            updateBillsUI();
+            updateSummary();
+          }
+        };
+        div.appendChild(editBtn);
+        div.appendChild(deleteBtn);
+        billsContainer.appendChild(div);
+      });
+    }
+    function loadBillForEditing(billId) {
+      const bill = bills.find(b => b.id === billId);
+      if (!bill) return;
+      editBillId = bill.id;
+      document.getElementById('bill-name').value = bill.name;
+      // Set the payer from the common field
+      document.getElementById('payer-select').value = bill.payer;
+      if (bill.type === 'simple') {
+        document.getElementById('bill-type').value = 'simple';
+        toggleBillType();
+        document.getElementById('bill-amount').value = bill.amount;
+        document.getElementById('split-method').value = bill.splitMethod;
+        toggleSplitInputs();
+        if (bill.splitMethod !== 'even') {
+          const container = document.getElementById('split-inputs');
+          const inputs = container.querySelectorAll('input');
+          inputs.forEach(input => {
+            const pid = parseInt(input.getAttribute('data-participant-id'));
+            input.value = bill.splitValues[pid] ? bill.splitValues[pid].toFixed(2) : "";
+          });
+        }
+      } else if (bill.type === 'itemized') {
+        document.getElementById('bill-type').value = 'itemized';
+        toggleBillType();
+        document.getElementById('overall-total').value = bill.overallTotal;
+        currentBillItems = [...bill.items];
+        updateItemsList();
+      }
+      document.getElementById('bill-name').focus();
+      window.scrollTo(0,0);
+    }
+    function updateSummary() {
+      let summary = {};
+      participants.forEach(p => {
+        summary[p.id] = 0;
+      });
+      bills.forEach(bill => {
+        // Subtract each participant's share for the bill
+        for (const pid in bill.splitValues) {
+          summary[pid] -= bill.splitValues[pid];
+        }
+        // Credit the payer with the total paid amount
+        if (bill.payer && summary[bill.payer] !== undefined) {
+          summary[bill.payer] += (bill.type === 'simple' ? bill.amount : bill.overallTotal);
+        }
+      });
+      const tbody = document.getElementById('summary-table').querySelector('tbody');
+      tbody.innerHTML = '';
+      participants.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.name}</td><td>${summary[p.id].toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
