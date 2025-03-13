@@ -127,6 +127,19 @@
           <textarea id="student_emails" rows="40" placeholder="One email per line"></textarea>
         </div>
       </div>
+
+      <!-- New: Time Period Limit -->
+      <div class="input-row">
+        <div class="input-col">
+          <label for="start_period">Start Period (DD/MM/YYYY):</label>
+          <input type="text" id="start_period" placeholder="e.g., 04/01/2021">
+        </div>
+        <div class="input-col">
+          <label for="end_period">End Period (DD/MM/YYYY):</label>
+          <input type="text" id="end_period" placeholder="e.g., 04/07/2021">
+        </div>
+      </div>
+
       <!-- Value for Y and control buttons -->
       <div class="input-row">
         <div class="input-col">
@@ -174,16 +187,15 @@
     <p>You can copy the data from the output columns into .xls file, and import back into myTimetable to update attendance.<br> Use <strong>Clear All</strong> to reset everything or <strong>Clear Parse</strong> to clear just the outputs.</p>
   </div>
 
-
-  <script>
-    // Create 7 day columns in the output section
+    <script>
+    // Generate 7 day columns in the output section
     const outputSection = document.getElementById("outputSection");
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 7; i++) {
       const dayDiv = document.createElement("div");
       dayDiv.className = "day-col";
       dayDiv.id = "day_" + i;
       dayDiv.innerHTML = `
-        <div class="day-title">Day ${i}</div>
+        <div class="day-title" id="day_${i}_title">Day ${i}</div>
         <div class="day-output">
           <div class="output-col">
             <label>IDs</label>
@@ -202,7 +214,14 @@
       outputSection.appendChild(dayDiv);
     }
 
-    // Function to parse a date string in two possible formats
+    // Helper function to format time as HH:MM
+    function formatTime(date) {
+      let hh = String(date.getHours()).padStart(2, '0');
+      let mm = String(date.getMinutes()).padStart(2, '0');
+      return hh + ":" + mm;
+    }
+
+    // Function to parse a date string in two formats for attendance records
     function parseDate(dateStr) {
       let m;
       // Format: MM/DD/YYYY HH:MM
@@ -230,6 +249,22 @@
       throw new Error("Date format not recognized: " + dateStr);
     }
 
+    // Helper function to parse period limits, expecting DD/MM/YYYY format only.
+    function parsePeriod(dateStr, isStart) {
+      let m = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); // DD/MM/YYYY
+      if(m){
+        let day = parseInt(m[1], 10);
+        let month = parseInt(m[2], 10) - 1;
+        let year = parseInt(m[3], 10);
+        if(isStart){
+          return new Date(year, month, day, 0, 0);
+        } else {
+          return new Date(year, month, day, 23, 59);
+        }
+      }
+      throw new Error("Period date format not recognized (use DD/MM/YYYY): " + dateStr);
+    }
+
     // Main function to parse inputs and display outputs
     function parseLists() {
       document.getElementById("error_message").innerText = "";
@@ -243,17 +278,28 @@
         document.getElementById("error_message").innerText = "Number of dates and student emails do not match";
         return;
       }
+      
+      // Read and parse period limits (if provided) using DD/MM/YYYY format.
+      let startPeriodStr = document.getElementById("start_period").value.trim();
+      let endPeriodStr = document.getElementById("end_period").value.trim();
+      let startPeriod = startPeriodStr ? parsePeriod(startPeriodStr, true) : null;
+      let endPeriod = endPeriodStr ? parsePeriod(endPeriodStr, false) : null;
 
-      // Group student emails by day (using YYYY-MM-DD as key)
+      // Group attendance records by day (using YYYY-MM-DD as key)
+      // Each record is stored as an object with the email and the full date/time.
       let days = {};
       for (let i = 0; i < dates.length; i++) {
         try {
           let dateObj = parseDate(dates[i]);
+          // Filter by period if limits are provided
+          if(startPeriod && dateObj < startPeriod) continue;
+          if(endPeriod && dateObj > endPeriod) continue;
+          
           let day_key = dateObj.getFullYear() + "-" +
                         String(dateObj.getMonth() + 1).padStart(2, '0') + "-" +
                         String(dateObj.getDate()).padStart(2, '0');
           if (!days[day_key]) { days[day_key] = []; }
-          days[day_key].push(student_emails[i]);
+          days[day_key].push({ email: student_emails[i], time: dateObj });
         } catch (error) {
           document.getElementById("error_message").innerText = error.message;
           return;
@@ -266,18 +312,49 @@
         let dayOutputIds = document.getElementById("day" + (dayIndex+1) + "_ids");
         let dayOutputCode = document.getElementById("day" + (dayIndex+1) + "_code");
         let dayOutputMinutes = document.getElementById("day" + (dayIndex+1) + "_minutes");
+        let dayTitle = document.getElementById("day_" + (dayIndex+1) + "_title");
         
         // Clear previous outputs
         dayOutputIds.value = "";
         dayOutputCode.value = "";
         dayOutputMinutes.value = "";
         
-        if (dayIndex >= sortedDays.length) continue;
+        if (dayIndex >= sortedDays.length) {
+          dayTitle.innerText = "";
+          continue;
+        }
         let dayKey = sortedDays[dayIndex];
-        let attendedEmails = days[dayKey];
-        // Clean the student emails to extract numeric IDs (expects formats like s123456@student.rmit.edu.vn or s123456@rmit.edu.au)
-        let cleaned_attended_ids = attendedEmails.map(email => {
-          let match = email.match(/^[sS](\d+)@(?:student\.)?rmit\.edu\.(?:vn|au)$/);
+        let attendanceRecords = days[dayKey];  // array of { email, time }
+        
+        // Filter records: only include those with an email that (when cleaned) is in master_ids
+        let filteredRecords = attendanceRecords.filter(record => {
+          let match = record.email.match(/^[sS](\d+)@(?:student\.)?rmit\.edu\.(?:vn|au)$/);
+          return match && master_ids.includes(match[1]);
+        });
+        
+        // Format dayKey from YYYY-MM-DD to DD/MM/YY
+        let parts = dayKey.split("-");
+        let formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0].substring(2);
+        
+        // Create a Date object from the day parts to determine the day of the week.
+        let d = new Date(parts[0], parts[1] - 1, parts[2]);
+        let weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()];
+        
+        if(filteredRecords.length > 0){
+          // Compute earliest and latest time from the filtered records only
+          let times = filteredRecords.map(record => record.time);
+          let earliest = times.reduce((a, b) => a < b ? a : b);
+          let latest = times.reduce((a, b) => a > b ? a : b);
+          let earliestStr = formatTime(earliest);
+          let latestStr = formatTime(latest);
+          dayTitle.innerText = formattedDate + " (" + weekday + ") " + earliestStr + " - " + latestStr;
+        } else {
+          dayTitle.innerText = formattedDate + " (" + weekday + ")";
+        }
+        
+        // Use the filtered records to build the output for Y/N and minutes
+        let cleaned_attended_ids = filteredRecords.map(record => {
+          let match = record.email.match(/^[sS](\d+)@(?:student\.)?rmit\.edu\.(?:vn|au)$/);
           return match ? match[1] : null;
         }).filter(id => id !== null);
 
@@ -307,6 +384,8 @@
       document.getElementById("dates").value = "";
       document.getElementById("student_emails").value = "";
       document.getElementById("value_for_Y").value = "120";
+      document.getElementById("start_period").value = "";
+      document.getElementById("end_period").value = "";
       clearParse();
       document.getElementById("error_message").innerText = "";
     }
@@ -317,9 +396,11 @@
         document.getElementById("day" + i + "_ids").value = "";
         document.getElementById("day" + i + "_code").value = "";
         document.getElementById("day" + i + "_minutes").value = "";
+        document.getElementById("day_" + i + "_title").innerText = "Day " + i;
       }
       document.getElementById("error_message").innerText = "";
     }
+
     // Open the instructions overlay
     function openInstructions() {
       document.getElementById("instructionsOverlay").style.display = "block";
