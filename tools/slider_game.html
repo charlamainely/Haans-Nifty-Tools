@@ -2,58 +2,147 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fast-Good-Cheap Slider Game</title>
+  <title>Fast ★ Good ★ Cheap</title>
   <style>
+    /* Reset & box-sizing */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Full-screen flex centering with stronger pastel gradient background */
     body {
-      font-family: sans-serif;
-      padding: 2rem;
-      text-align: center;
-      background: #f9f9f9;
-    }
-    .sliders {
+      height: 100vh;
       display: flex;
-      justify-content: space-around;
-      margin: 2rem 0;
+      justify-content: center;
+      align-items: center;
+      background-color: #f9f9f9;
+      background-image: linear-gradient(
+        135deg,
+        rgba(255, 255,   0,   0.2),
+        rgba(255,   0, 255,   0.2),
+        rgba(135, 206, 235,   0.2),
+        rgba(119, 221, 119,   0.2)
+      );
+      overflow: hidden;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
-    .slider-group {
+
+    /* Base container 600×450, flex column with even spacing */
+    .container {
+      width: 600px;
+      height: 450px;
+      padding: 3rem 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform-origin: top center;
       display: flex;
       flex-direction: column;
+      justify-content: space-evenly;
+    }
+
+    /* Headings/text */
+    h1 {
+      font-size: 1.75rem;
+      text-align: center;
+    }
+    p {
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    /* Slider rows */
+    .slider-group {
+      display: flex;
       align-items: center;
     }
+    .slider-group label {
+      flex: 0 0 70px;
+      text-align: right;
+      margin-right: 0.75rem;
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
     .slider-group input[type=range] {
-      width: 200px;
-      margin-top: 0.5rem;
+      -webkit-appearance: none;
+      width: 100%;
+      height: 16px;
+      background-color: #ddd;
+      background-image: linear-gradient(
+        90deg,
+        #FFFF00,    /* yellow */
+        #FF6EC7,    /* neon pink */
+        #87CEEB,    /* sky blue */
+        #77DD77     /* pastel green */
+      );
+      background-size: 0% 100%;
+      background-repeat: no-repeat;
+      border-radius: 8px;
+      outline: none;
+    }
+    .slider-group input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;      /* white fill */
+      border: none;
+      cursor: pointer;
+      margin-top: 0;
+    }
+    .slider-group input[type=range]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;      /* white fill */
+      border: none;
+      cursor: pointer;
     }
     .value {
+      flex: 0 0 50px;
+      text-align: right;
+      margin-left: 0.75rem;
       font-weight: bold;
-      margin-top: 0.25rem;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
 
-  <h1>What's Your Budget?</h1>
-  <p>Let's see what we can do with your design budget.</p>
+  <div class="container">
+    <h1>What Are You Looking For?</h1>
+    <p>So, you want to hire a designer. Tell us how you want your design to be.</p>
 
-  <div class="sliders">
     <div class="slider-group">
       <label for="fast">Fast</label>
-      <input id="fast" class="slider" type="range" min="0" max="100" value="0">
+      <input id="fast" type="range" min="0" max="100" value="0">
       <div class="value" id="fastVal">0%</div>
     </div>
+
     <div class="slider-group">
       <label for="good">Good</label>
-      <input id="good" class="slider" type="range" min="0" max="100" value="0">
+      <input id="good" type="range" min="0" max="100" value="0">
       <div class="value" id="goodVal">0%</div>
     </div>
+
     <div class="slider-group">
       <label for="cheap">Cheap</label>
-      <input id="cheap" class="slider" type="range" min="0" max="100" value="0">
+      <input id="cheap" type="range" min="0" max="100" value="0">
       <div class="value" id="cheapVal">0%</div>
     </div>
   </div>
 
   <script>
+    // Responsive scaling: on mobile (narrower than 600px), fill 95% of viewport width
+    function adjustScale() {
+      const baseWidth = 600;
+      const desired   = window.innerWidth * 0.95;
+      const scale     = Math.min(desired / baseWidth, 1);
+      document.querySelector('.container')
+              .style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', adjustScale);
+    window.addEventListener('load',   adjustScale);
+
+    // Slider logic
     const sliders = {
       fast:  document.getElementById('fast'),
       good:  document.getElementById('good'),
@@ -64,61 +153,53 @@
       good:  document.getElementById('goodVal'),
       cheap: document.getElementById('cheapVal')
     };
+    const prev = { fast:0, good:0, cheap:0 };
 
-    // track previous values to know increase vs. decrease
-    const prevValues = { fast: 0, good: 0, cheap: 0 };
-
-    function updateLabels() {
-      for (let k in sliders) {
-        labels[k].textContent = sliders[k].value + '%';
-      }
+    function updateSlider(key) {
+      const s = sliders[key];
+      labels[key].textContent = s.value + '%';
+      s.style.backgroundSize = `${s.value}% 100%`;
     }
 
     function onSlide(e) {
-      const key    = e.target.id;
-      const oldVal = prevValues[key];
-      const newVal = +sliders[key].value;
-      const delta  = newVal - oldVal;
-
-      const others = ['fast','good','cheap'].filter(k => k !== key);
-      let v1 = +sliders[others[0]].value;
-      let v2 = +sliders[others[1]].value;
+      const key   = e.target.id;
+      const old   = prev[key];
+      const val   = +sliders[key].value;
+      const delta = val - old;
+      const others= ['fast','good','cheap'].filter(k=>k!==key);
+      let v1 = +sliders[others[0]].value,
+          v2 = +sliders[others[1]].value;
 
       if (delta > 0) {
-        // sharing from the others if over the 200% total cap
-        const total = newVal + v1 + v2;
+        const total = val + v1 + v2;
         if (total > 200) {
-          const excess   = total - 200;
-          const sumO     = v1 + v2;
-          if (sumO > 0) {
-            sliders[others[0]].value = Math.max(0, v1 - (v1/sumO)*excess);
-            sliders[others[1]].value = Math.max(0, v2 - (v2/sumO)*excess);
+          const excess = total - 200, sum = v1 + v2;
+          if (sum > 0) {
+            sliders[others[0]].value = Math.max(0, v1 - (v1/sum)*excess);
+            sliders[others[1]].value = Math.max(0, v2 - (v2/sum)*excess);
+            updateSlider(others[0]);
+            updateSlider(others[1]);
           }
         }
-      }
-      else if (delta < 0) {
-        // redistributing freed % to others (proportional to their room before 100)
-        const freed   = -delta;
-        const cap1    = 100 - v1;
-        const cap2    = 100 - v2;
-        const sumCap  = cap1 + cap2;
-        if (sumCap > 0) {
-          sliders[others[0]].value = Math.min(100, v1 + (cap1/sumCap)*freed);
-          sliders[others[1]].value = Math.min(100, v2 + (cap2/sumCap)*freed);
+      } else if (delta < 0) {
+        const freed = -delta,
+              cap1  = 100 - v1,
+              cap2  = 100 - v2,
+              space = cap1 + cap2;
+        if (space > 0) {
+          sliders[others[0]].value = Math.min(100, v1 + (cap1/space)*freed);
+          sliders[others[1]].value = Math.min(100, v2 + (cap2/space)*freed);
+          updateSlider(others[0]);
+          updateSlider(others[1]);
         }
       }
 
-      updateLabels();
-      // refresh prevValues for next drag
-      for (let k in sliders) {
-        prevValues[k] = +sliders[k].value;
-      }
+      updateSlider(key);
+      Object.keys(prev).forEach(k => prev[k] = +sliders[k].value);
     }
 
-    // attach handlers & initialize
     Object.values(sliders).forEach(s => s.addEventListener('input', onSlide));
-    updateLabels();
-    Object.keys(sliders).forEach(k => prevValues[k] = +sliders[k].value);
+    Object.keys(sliders).forEach(updateSlider);
   </script>
 
 </body>
