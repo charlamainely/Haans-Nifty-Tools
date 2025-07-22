@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance Parser (Enhanced)</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    .navbar{
+      width:100%;
+      height:80px;
+    }
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      background: #f4f4f4;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      flex: 0 0 auto;
+    }
+    main {
+      display: flex;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+    /* Left panel styling */
+    .input-panel {
+      width: 30%;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .file-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex: 0 0 auto;
+    }
+    .file-input {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .file-input label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    #previewSection { display:flex; gap:10px; height:200px; } 
+    .preview-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-col strong {
+      margin-bottom: 5px;
+    }
+    .preview-panel {
+      border: 1px solid #ccc;
+      padding: 10px;
+      overflow: auto;
+      background: #fafafa;
+      flex: 1;
+    }
+    /* Input rows */
+    .input-row {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+    .input-row label {
+      width: 100px;
+      font-weight: bold;
+    }
+    .input-row input {
+      flex: 1;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    /* Buttons */
+    .button-group {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+    #error_message {
+      color: red;
+    }
+    /* Right panel: full-height, horizontal scroll if needed */
+    .output-panel {
+      flex: 1;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 20px;
+      gap: 20px; /* increased gap between days */
+    }
+    .day-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* increased vertical gap inside column */
+      min-width: 120px; /* reduced width to compensate */
+      /* fill full height minus padding */
+      height: calc(100% - 40px);
+    }
+    .day-header {
+      font-weight: bold;
+      text-align: center;
+      flex: 0 0 auto;
+    }
+    .day-output {
+      display: flex;
+      gap: 5px;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+    .day-output textarea {
+      flex: 1;
+      box-sizing: border-box;
+      height: auto;
+      overflow: auto;
+    }
+    h1{
+      text-align: center;
+      padding-top: 20px;
+    }
+  </style>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+    <h1>Attendance Parser</h1>
+  <main>
+    <div class="input-panel">
+      <div class="file-row">
+        <div class="file-input"><label>Master List</label><input type="file" id="file_master" accept=".xls,.xlsx"></div>
+        <div class="file-input"><label>Attendance Data</label><input type="file" id="file_attendance" accept=".xls,.xlsx"></div>
+      </div>
+      <br>
+      <button onclick="extractData()">Extract Data</button>
+      <div id="previewSection">
+        <div class="preview-col"><strong>Master IDs</strong><div id="previewMaster" class="preview-panel"></div></div>
+        <div class="preview-col"><strong>Dates</strong><div id="previewDates" class="preview-panel"></div></div>
+        <div class="preview-col"><strong>Emails</strong><div id="previewEmails" class="preview-panel"></div></div>
+      </div>
+      <div class="input-row"><label>Start:</label><input type="date" id="start_period"></div>
+      <div class="input-row"><label>End:</label><input type="date" id="end_period"></div>
+      <div class="input-row"><label>Y (mins):</label><input type="number" id="value_for_Y" value="120"></div>
+      <div class="button-group">
+        <button onclick="parseLists()">Parse</button>
+        <button onclick="exportMaster()">Export</button>
+        <button onclick="clearOutput()">Clear</button>
+      </div>
+    </div>
+    <div class="output-panel" id="outputSection"></div>
+  </main>
+  <script>
+    let masterWB, masterSheet, sheetName;
+    let masterData = [], attendanceData = [], days = {};
+
+    document.getElementById('file_master').addEventListener('change', async e => {
+      const buf = await e.target.files[0].arrayBuffer();
+      masterWB = XLSX.read(buf,{type:'array',cellDates:true});
+      sheetName = masterWB.SheetNames[0];
+      masterSheet = masterWB.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(masterSheet,{header:1,raw:false});
+      masterData = rows.slice(5).map(r=>r[0]).filter(c=>c).map(String).map(s=>s.trim());
+    });
+
+    document.getElementById('file_attendance').addEventListener('change', async e=>{
+      const buf = await e.target.files[0].arrayBuffer();
+      const wb = XLSX.read(buf,{type:'array',cellDates:true});
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false});
+      attendanceData = rows.slice(1).map(r=>{
+        const cell=r[1], email=r[3]; if(!cell||!email) return null;
+        let d = cell instanceof Date ? cell : (typeof cell==='number'
+          ? new Date(...Object.values(XLSX.SSF.parse_date_code(cell)).slice(0,6))
+          : new Date(cell));
+        return { date:d, email:String(email).trim().toLowerCase() };
+      }).filter(x=>x);
+    });
+
+    function extractData(){
+      document.getElementById('previewMaster').textContent = masterData.join('\n')||'No data';
+      document.getElementById('previewDates').textContent  = attendanceData.map(e=>e.date.toLocaleString()).join('\n')||'No data';
+      document.getElementById('previewEmails').textContent = attendanceData.map(e=>e.email).join('\n')||'No data';
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      const out = document.getElementById('outputSection');
+      for(let i=1;i<=7;i++){
+        const col = document.createElement('div'); col.className='day-column';
+        col.innerHTML = `<div class="day-header" id="day_${i}_title"></div><div class="day-output"><textarea id="day${i}_ids" readonly></textarea><textarea id="day${i}_code" readonly></textarea><textarea id="day${i}_minutes" readonly></textarea></div>`;
+        out.appendChild(col);
+      }
+    });
+
+    function parseLists(){
+      days={}; const start=document.getElementById('start_period').value?new Date(document.getElementById('start_period').value):null;
+      const end=document.getElementById('end_period').value?new Date(document.getElementById('end_period').value+'T23:59:59'):null;
+      attendanceData.forEach(({date,email})=>{
+        if((start&&date<start)||(end&&date>end)) return;
+        // Key by Day/Month only, disregard year
+        const key=`${date.getDate()}/${date.getMonth()+1}`;
+        (days[key]||(days[key]=[])).push(email);
+      });
+      const ids=[...masterData];
+      Object.keys(days).slice(0,7).forEach((key,i)=>{
+        const a=days[key]||[];
+        document.getElementById(`day_${i+1}_title`).textContent=key;
+        document.getElementById(`day${i+1}_ids`).value=ids.join('\n');
+        const codes=ids.map(id=>a.some(e=>e.startsWith(`s${id}@`))?'Y':'N');
+        document.getElementById(`day${i+1}_code`).value=codes.join('\n');
+        const mins=codes.map(c=>c==='Y'?document.getElementById('value_for_Y').value:'0');
+        document.getElementById(`day${i+1}_minutes`).value=mins.join('\n');
+      });
+    }
+
+    // --- Start of Updated exportMaster function with correct header row ---
+    function exportMaster(){
+      if(!masterWB) {
+        return alert('No master list loaded. Please upload the master list first.');
+      }
+
+      const sheet = masterSheet;
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      const hr = 3; // *** CHANGED: Header Row is now 4 (0-indexed 3) where dates like "7/3" are ***
+      const idc = 0; // ID Column (0-indexed, so column A in Excel where student IDs are)
+
+      // Iterate through columns: 'c' is the column for Date Header and 'Y'/'N' marks,
+      // 'c+1' is for the Minutes. The loop steps by 2 because each attendance day
+      // takes two columns (Code and Minutes).
+      for(let c = 3; c <= range.e.c; c += 2){ // Starting column D (0-indexed 3)
+        const headerCell = sheet[XLSX.utils.encode_cell({r:hr, c})];
+        let headerDateKey = null; // This will be D/M format
+
+        if (headerCell && headerCell.v) {
+          let tempDate;
+          if (headerCell.v instanceof Date) {
+            tempDate = headerCell.v;
+          } else if (typeof headerCell.v === 'string') {
+              const parts = headerCell.v.split('/');
+              if (parts.length >= 2) {
+                  const day = parseInt(parts[0], 10);
+                  const month = parseInt(parts[1], 10);
+                  if (!isNaN(day) && !isNaN(month)) {
+                      tempDate = new Date(1, month - 1, day);
+                  }
+              } else {
+                  tempDate = new Date(headerCell.v);
+              }
+          }
+
+          if (tempDate && !isNaN(tempDate.getTime())) {
+            headerDateKey = `${tempDate.getDate()}/${tempDate.getMonth()+1}`;
+          }
+        }
+
+        const attended = headerDateKey && days[headerDateKey] ? days[headerDateKey] : [];
+
+        for(let r = hr + 2; r <= range.e.r; r++){ // Student IDs start from Row 6 (hr + 2)
+          const idCell = sheet[XLSX.utils.encode_cell({r, c:idc})];
+          const id = idCell?.v;
+          if(!id) {
+            continue;
+          }
+
+          const studentIdString = String(id).trim();
+          const isAttended = attended.some(email => email.startsWith(`s${studentIdString}@`));
+
+          const mark = isAttended ? 'Y' : 'N';
+          const minutes = mark === 'Y' ? Number(document.getElementById('value_for_Y').value) : 0;
+
+          sheet[XLSX.utils.encode_cell({r, c})] = {t:'s', v:mark};
+          sheet[XLSX.utils.encode_cell({r, c:c+1})] = {t:'n', v:minutes};
+        }
+      }
+
+      const out = XLSX.write(masterWB, {bookType:'xlsx', type:'array'});
+      const blob = new Blob([out], {type:'application/octet-stream'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Master_with_Attendance.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+    // --- End of Updated exportMaster function ---
+
+    function clearOutput(){
+      ['previewMaster','previewDates','previewEmails'].forEach(id=>document.getElementById(id).textContent='');
+      for(let i=1;i<=7;i++){document.getElementById(`day${i}_ids`).value='';document.getElementById(`day${i}_code`).value='';document.getElementById(`day${i}_minutes`).value='';}
+    }
+  </script>
+</body>
+</html>

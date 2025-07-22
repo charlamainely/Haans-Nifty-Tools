@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance Parser (Enhanced with Export - No Year Match)</title>
+  <style>
+    body { font-family: sans-serif; margin:0; padding:0; height:100vh; display:flex; flex-direction:column; }
+    header { background:#f4f4f4; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; }
+    main { flex:1; display:flex; overflow:hidden; }
+    .input-panel { width:30%; padding:20px; border-right:1px solid #ddd; overflow-y:auto; }
+    .file-row { display:flex; gap:10px; margin-bottom:15px; }
+    .file-input { flex:1; display:flex; flex-direction:column; }
+    .file-input label { font-weight:bold; margin-bottom:5px; }
+    #previewSection { display:flex; gap:10px; height:200px; }
+    .preview-col { flex:1; display:flex; flex-direction:column; }
+    .preview-panel { border:1px solid #ccc; padding:10px; background:#fafafa; overflow:auto; flex:1; }
+    .input-row { display:flex; align-items:center; gap:10px; margin-top:15px; }
+    .input-row label { width:100px; font-weight:bold; }
+    .button-group { display:flex; gap:10px; margin-top:15px; }
+    .output-panel { flex:1; display:flex; gap:20px; overflow-x:auto; padding:20px; }
+    .day-column { flex:1; display:flex; flex-direction:column; gap:10px; }
+    .day-output { display:flex; gap:5px; flex:1; }
+    textarea { width:100%; height:100px; }
+  </style>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Attendance Parser</h1>
+  </header>
+  <main>
+    <div class="input-panel">
+      <div class="file-row">
+        <div class="file-input"><label>Master List</label><input type="file" id="file_master" accept=".xls,.xlsx"></div>
+        <div class="file-input"><label>Attendance Data</label><input type="file" id="file_attendance" accept=".xls,.xlsx"></div>
+      </div>
+      <button onclick="extractData()">Extract Data</button>
+      <div id="previewSection">
+        <div class="preview-col"><strong>Master IDs</strong><div id="previewMaster" class="preview-panel"></div></div>
+        <div class="preview-col"><strong>Dates</strong><div id="previewDates" class="preview-panel"></div></div>
+        <div class="preview-col"><strong>Emails</strong><div id="previewEmails" class="preview-panel"></div></div>
+      </div>
+      <div class="input-row"><label>Start:</label><input type="date" id="start_period"></div>
+      <div class="input-row"><label>End:</label><input type="date" id="end_period"></div>
+      <div class="input-row"><label>Y (mins):</label><input type="number" id="value_for_Y" value="120"></div>
+      <div class="button-group">
+        <button onclick="parseLists()">Parse</button>
+        <button onclick="exportMaster()">Export</button>
+        <button onclick="clearOutput()">Clear</button>
+      </div>
+    </div>
+    <div class="output-panel" id="outputSection"></div>
+  </main>
+  <script>
+    let masterWB, masterSheet, sheetName;
+    let masterData = [], attendanceData = [], days = {};
+
+    document.getElementById('file_master').addEventListener('change', async e => {
+      const buf = await e.target.files[0].arrayBuffer();
+      masterWB = XLSX.read(buf,{type:'array',cellDates:true});
+      sheetName = masterWB.SheetNames[0];
+      masterSheet = masterWB.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(masterSheet,{header:1,raw:false});
+      masterData = rows.slice(5).map(r=>r[0]).filter(c=>c).map(String).map(s=>s.trim());
+    });
+
+    document.getElementById('file_attendance').addEventListener('change', async e=>{
+      const buf = await e.target.files[0].arrayBuffer();
+      const wb = XLSX.read(buf,{type:'array',cellDates:true});
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false});
+      attendanceData = rows.slice(1).map(r=>{
+        const cell=r[1], email=r[3]; if(!cell||!email) return null;
+        let d = cell instanceof Date ? cell : (typeof cell==='number'
+          ? new Date(...Object.values(XLSX.SSF.parse_date_code(cell)).slice(0,6))
+          : new Date(cell));
+        return { date:d, email:String(email).trim().toLowerCase() };
+      }).filter(x=>x);
+    });
+
+    function extractData(){
+      document.getElementById('previewMaster').textContent = masterData.join('\n')||'No data';
+      document.getElementById('previewDates').textContent  = attendanceData.map(e=>e.date.toLocaleString()).join('\n')||'No data';
+      document.getElementById('previewEmails').textContent = attendanceData.map(e=>e.email).join('\n')||'No data';
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      const out = document.getElementById('outputSection');
+      for(let i=1;i<=7;i++){
+        const col = document.createElement('div'); col.className='day-column';
+        col.innerHTML = `<div class="day-header" id="day_${i}_title"></div><div class="day-output"><textarea id="day${i}_ids" readonly></textarea><textarea id="day${i}_code" readonly></textarea><textarea id="day${i}_minutes" readonly></textarea></div>`;
+        out.appendChild(col);
+      }
+    });
+
+    function parseLists(){
+      days={}; const start=document.getElementById('start_period').value?new Date(document.getElementById('start_period').value):null;
+      const end=document.getElementById('end_period').value?new Date(document.getElementById('end_period').value+'T23:59:59'):null;
+      attendanceData.forEach(({date,email})=>{
+        if((start&&date<start)||(end&&date>end)) return;
+        // CRITICAL CHANGE: Key by Day/Month only, disregard year
+        const key=`${date.getDate()}/${date.getMonth()+1}`;
+        (days[key]||(days[key]=[])).push(email);
+      });
+      const ids=[...masterData];
+      Object.keys(days).slice(0,7).forEach((key,i)=>{
+        const a=days[key]||[];
+        document.getElementById(`day_${i+1}_title`).textContent=key;
+        document.getElementById(`day${i+1}_ids`).value=ids.join('\n');
+        const codes=ids.map(id=>a.some(e=>e.startsWith(`s${id}@`))?'Y':'N');
+        document.getElementById(`day${i+1}_code`).value=codes.join('\n');
+        const mins=codes.map(c=>c==='Y'?document.getElementById('value_for_Y').value:'0');
+        document.getElementById(`day${i+1}_minutes`).value=mins.join('\n');
+      });
+    }
+
+    // --- Start of Updated exportMaster function with NO YEAR matching ---
+    function exportMaster(){
+      if(!masterWB) {
+        return alert('No master list loaded. Please upload the master list first.');
+      }
+
+      const sheet = masterSheet;
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      const hr = 4; // Header Row (0-indexed, so row 5 in Excel where dates are expected)
+      const idc = 0; // ID Column (0-indexed, so column A in Excel where student IDs are)
+
+      // Iterate through columns: 'c' is the column for Date Header and 'Y'/'N' marks,
+      // 'c+1' is for the Minutes. The loop steps by 2 because each attendance day
+      // takes two columns (Code and Minutes).
+      for(let c = 3; c <= range.e.c; c += 2){
+        const headerCell = sheet[XLSX.utils.encode_cell({r:hr, c})];
+        let headerDateKey = null; // This will now be D/M format
+          debugger; // <--- ADD THIS LINE
+
+        if (headerCell && headerCell.v) {
+          let tempDate; // Use a temporary date object to parse, but only extract Day/Month for key
+          if (headerCell.v instanceof Date) {
+            tempDate = headerCell.v;
+          } else if (typeof headerCell.v === 'string') {
+              const parts = headerCell.v.split('/');
+              if (parts.length >= 2) { // Handles D/M or D/M/YYYY; we'll only use Day/Month
+                  const day = parseInt(parts[0], 10);
+                  const month = parseInt(parts[1], 10);
+                  if (!isNaN(day) && !isNaN(month)) {
+                      // Create a dummy date just to extract day/month consistently
+                      tempDate = new Date(1, month - 1, day); // Using year 1, doesn't matter for D/M key
+                  }
+              } else {
+                  // Fallback for other string date formats the Date constructor might handle
+                  tempDate = new Date(headerCell.v);
+              }
+          }
+
+          // If a valid date was parsed, format it to Day/Month only for the key
+          if (tempDate && !isNaN(tempDate.getTime())) {
+            headerDateKey = `${tempDate.getDate()}/${tempDate.getMonth()+1}`; // **CRITICAL CHANGE**
+          }
+        }
+
+        // Get the list of attended emails for the current date key (D/M format)
+        const attended = headerDateKey && days[headerDateKey] ? days[headerDateKey] : [];
+
+        // Iterate through rows below the header to find student IDs and write attendance
+        for(let r = hr + 1; r <= range.e.r; r++){
+          const idCell = sheet[XLSX.utils.encode_cell({r, c:idc})];
+          const id = idCell?.v; // Get student ID from Column A
+          if(!id) {
+            // If no ID, skip this row for writing attendance
+            continue;
+          }
+
+          // Ensure ID is a string and trimmed for consistent comparison
+          const studentIdString = String(id).trim();
+
+          // Check if this student attended on this date (email starts with s<ID>@)
+          const isAttended = attended.some(email => email.startsWith(`s${studentIdString}@`));
+
+          const mark = isAttended ? 'Y' : 'N';
+          // Get the value for 'Y' minutes from the input field, default to 0
+          const minutes = mark === 'Y' ? Number(document.getElementById('value_for_Y').value) : 0;
+
+          // Write 'Y'/'N' mark to the current column 'c' (e.g., D, F, H...)
+          sheet[XLSX.utils.encode_cell({r, c})] = {t:'s', v:mark}; // t:'s' for string
+
+          // Write minutes to the next column 'c+1' (e.g., E, G, I...)
+          sheet[XLSX.utils.encode_cell({r, c:c+1})] = {t:'n', v:minutes}; // t:'n' for number
+        }
+      }
+
+      // Generate and download the updated Excel file
+      const out = XLSX.write(masterWB, {bookType:'xlsx', type:'array'});
+      const blob = new Blob([out], {type:'application/octet-stream'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Master_with_Attendance.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+    // --- End of Updated exportMaster function ---
+
+    function clearOutput(){
+      ['previewMaster','previewDates','previewEmails'].forEach(id=>document.getElementById(id).textContent='');
+      for(let i=1;i<=7;i++){document.getElementById(`day${i}_ids`).value='';document.getElementById(`day${i}_code`).value='';document.getElementById(`day${i}_minutes`).value='';}
+    }
+  </script>
+</body>
+</html>

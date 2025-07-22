@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Data Sorter</title>
+  <link rel="stylesheet" href="../styles.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Tsukimi+Rounded:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {padding: 0px; }
+    .container {padding: 0px}
+    textarea, input { width: 100%; margin-bottom: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; background-color: #fff;}
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    button { padding: 10px 20px; margin-top: 10px; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<header>
+  <nav class="navbar">
+    <!-- Logo or site title -->
+    <div class="logo">Haaan's Nifty Gadgets</div>
+
+    <!-- The hidden checkbox that will control our nav -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
+    <!-- The hamburger button that appears on mobile -->
+    <label for="nav-toggle" class="nav-toggle-label">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <!-- The main navigation menu -->
+    <ul class="nav-menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="https://www.haaanly.com/">About Haaan</a></li>
+      <li><a href="https://charlamainely.itch.io/">Bored?</a></li>
+      <!-- Add more tools or links as needed -->
+    </ul>
+  </nav>
+</header>
+<body>
+  <div class="container">
+  <h2>Student Data Sorter</h2>
+  <label for="inputData">Paste student list (each line like "Jane Doe s1234567"):</label><br>
+  <br>
+  <textarea id="inputData" rows="10" placeholder="e.g. John Smith s1234567\nMaria Garcia s9876543"></textarea><br>
+
+  <label for="emailDomain">Enter email domain (e.g. @school.edu):</label><br>
+  <input type="text" id="emailDomain" placeholder="@school.edu"><br>
+
+  <button onclick="processData()">Preview</button>
+  <button onclick="exportExcel()">Export Excel</button>
+
+  <table id="outputTable" style="display:none">
+    <thead>
+      <tr><th>Full Name</th><th>Student ID</th><th>Email</th></tr>
+    </thead>
+    <tbody id="outputBody"></tbody>
+  </table>
+</div>
+  <script>
+    function processData() {
+      const input = document.getElementById("inputData").value.trim();
+      const domain = document.getElementById("emailDomain").value.trim();
+      const lines = input.split("\n");
+      const tbody = document.getElementById("outputBody");
+      tbody.innerHTML = "";
+      const results = [];
+
+      lines.forEach(line => {
+        const idMatch = line.match(/s\d+/i);
+        if (idMatch) {
+          const rawId = idMatch[0];                 // Preserve original match
+          const studentId = rawId.toLowerCase();    // Normalize for output
+          let fullName = line.replace(rawId, "");   // Remove ID from string
+
+          fullName = fullName
+            .replace(/([a-zA-Z])([A-Z])/g, '$1 $2')
+            .replace(/([0-9])([A-Za-z])/g, '$1 $2')
+            .replace(/[-,]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          const email = studentId + domain;
+          results.push([fullName, studentId, email]);
+
+          const row = `<tr><td>${fullName}</td><td>${studentId}</td><td>${email}</td></tr>`;
+          tbody.insertAdjacentHTML('beforeend', row);
+        }
+      });
+
+      document.getElementById("outputTable").style.display = results.length ? "table" : "none";
+      window.currentResults = results;
+    }
+
+    function exportExcel() {
+      if (!window.currentResults) return;
+
+      const ws_data = [
+        ["Full Name", "Student ID", "Email"],
+        ...window.currentResults
+      ];
+
+      const worksheet = XLSX.utils.aoa_to_sheet(ws_data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+
+      XLSX.writeFile(workbook, "student_data.xlsx");
+    }
+  </script>
+</body>
+</html>

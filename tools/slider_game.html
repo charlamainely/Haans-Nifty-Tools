@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fast-Good-Cheap Slider Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    .sliders {
+      display: flex;
+      justify-content: space-around;
+      margin: 2rem 0;
+    }
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .slider-group input[type=range] {
+      width: 200px;
+      margin-top: 0.5rem;
+    }
+    .value {
+      font-weight: bold;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Fast ★ Good ★ Cheap</h1>
+  <p>All start at 0%. Only two can sum to 100 each (max total 200). Move a slider up to “steal” from the others; move it down to “give back.”</p>
+
+  <div class="sliders">
+    <div class="slider-group">
+      <label for="fast">Fast</label>
+      <input id="fast" class="slider" type="range" min="0" max="100" value="0">
+      <div class="value" id="fastVal">0%</div>
+    </div>
+    <div class="slider-group">
+      <label for="good">Good</label>
+      <input id="good" class="slider" type="range" min="0" max="100" value="0">
+      <div class="value" id="goodVal">0%</div>
+    </div>
+    <div class="slider-group">
+      <label for="cheap">Cheap</label>
+      <input id="cheap" class="slider" type="range" min="0" max="100" value="0">
+      <div class="value" id="cheapVal">0%</div>
+    </div>
+  </div>
+
+  <script>
+    const sliders = {
+      fast:  document.getElementById('fast'),
+      good:  document.getElementById('good'),
+      cheap: document.getElementById('cheap')
+    };
+    const labels = {
+      fast:  document.getElementById('fastVal'),
+      good:  document.getElementById('goodVal'),
+      cheap: document.getElementById('cheapVal')
+    };
+
+    // track previous values to know increase vs. decrease
+    const prevValues = { fast: 0, good: 0, cheap: 0 };
+
+    function updateLabels() {
+      for (let k in sliders) {
+        labels[k].textContent = sliders[k].value + '%';
+      }
+    }
+
+    function onSlide(e) {
+      const key    = e.target.id;
+      const oldVal = prevValues[key];
+      const newVal = +sliders[key].value;
+      const delta  = newVal - oldVal;
+
+      const others = ['fast','good','cheap'].filter(k => k !== key);
+      let v1 = +sliders[others[0]].value;
+      let v2 = +sliders[others[1]].value;
+
+      if (delta > 0) {
+        // sharing from the others if over the 200% total cap
+        const total = newVal + v1 + v2;
+        if (total > 200) {
+          const excess   = total - 200;
+          const sumO     = v1 + v2;
+          if (sumO > 0) {
+            sliders[others[0]].value = Math.max(0, v1 - (v1/sumO)*excess);
+            sliders[others[1]].value = Math.max(0, v2 - (v2/sumO)*excess);
+          }
+        }
+      }
+      else if (delta < 0) {
+        // redistributing freed % to others (proportional to their room before 100)
+        const freed   = -delta;
+        const cap1    = 100 - v1;
+        const cap2    = 100 - v2;
+        const sumCap  = cap1 + cap2;
+        if (sumCap > 0) {
+          sliders[others[0]].value = Math.min(100, v1 + (cap1/sumCap)*freed);
+          sliders[others[1]].value = Math.min(100, v2 + (cap2/sumCap)*freed);
+        }
+      }
+
+      updateLabels();
+      // refresh prevValues for next drag
+      for (let k in sliders) {
+        prevValues[k] = +sliders[k].value;
+      }
+    }
+
+    // attach handlers & initialize
+    Object.values(sliders).forEach(s => s.addEventListener('input', onSlide));
+    updateLabels();
+    Object.keys(sliders).forEach(k => prevValues[k] = +sliders[k].value);
+  </script>
+
+</body>
+</html>

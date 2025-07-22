@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Screenplay Writing Tool</title>
+  <style>
+    /* ===== On-Screen Styles ===== */
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f5f5f5;
+      margin: 20px;
+    }
+    /* Tab Navigation */
+    #tabs {
+      margin-bottom: 10px;
+    }
+    .tab {
+      display: inline-block;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      margin-right: -1px;
+    }
+    .tab.active {
+      background-color: #fff;
+      border-bottom: none;
+      font-weight: bold;
+    }
+    .tab-content {
+      border: 1px solid #ccc;
+      background-color: #fff;
+      padding: 20px;
+      display: none;
+      margin-bottom: 20px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    /* COVER PAGE EDITOR */
+    .coverContainer {
+      width: 8.5in;
+      height: 11in;
+      position: relative;
+      background-color: #fff;
+      margin: 0 auto;
+      /* Remove any border for export */
+    }
+    #coverMain {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 80%;
+    }
+    /* Use a textarea for the title so text wraps */
+    #coverTitle {
+      width: 100%;
+      font-size: 28px;
+      text-transform: uppercase;
+      resize: none;
+      border: none;
+      outline: none;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      word-break: break-all;
+      margin-bottom: 20px;
+    }
+    .coverField {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      margin-bottom: 20px;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      word-break: break-all;
+    }
+    #titleLine {
+      border-bottom: 1px solid black;
+      width: 100%;
+      margin: 10px 0 20px;
+    }
+    /* Separate contact fields */
+    #coverContact {
+      position: absolute;
+      bottom: 1in;
+      right: 1in;
+      width: 200px;
+      text-align: right;
+      font-size: 12px;
+    }
+    #coverContact input {
+      width: 100%;
+      margin-bottom: 10px;
+      border: none;
+      outline: none;
+      text-align: right;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      word-break: break-all;
+    }
+    /* SCRIPT EDITOR */
+    #toolbar {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1000;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    #toolbar button {
+      margin-right: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    .scriptContainer {
+      width: 8.5in;
+      min-height: 11in;
+      padding: 1in;
+      background-color: #fff;
+      margin: 0 auto;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      position: relative;
+      overflow: auto;
+      /* Show horizontal guide lines for editing */
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent calc(11in - 2px),
+        #ccc calc(11in - 2px),
+        #ccc 11in
+      );
+      background-size: 100% 11in;
+    }
+    /* In-editor screenplay formatting */
+    .fade-in { text-transform: uppercase; font-weight: bold; margin-bottom: 20px; }
+    .scene-heading { text-transform: uppercase; font-weight: bold; margin: 20px 0 10px; }
+    .action { margin: 10px 0; }
+    .character { text-align: center; text-transform: uppercase; margin: 20px auto 5px; width: 70%; }
+    .dialogue { margin: 0 auto 15px; width: 70%; text-align: left; }
+    .parenthetical { margin: 0 auto 15px; width: 60%; text-align: center; font-style: italic; }
+    .transition { text-align: right; margin-right: 1in; margin-bottom: 20px; font-weight: bold; }
+    /* PRINT/EXPORT BUTTON */
+    #printButton {
+      display: block;
+      margin: 30px auto;
+      padding: 15px 30px;
+      font-size: 18px;
+    }
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body { margin: 0; }
+      /* Hide on-screen controls */
+      #tabs, #toolbar, #printButton { display: none; }
+      /* Remove on-screen borders */
+      .coverContainer, .scriptContainer { border: none; background: white; }
+      /* Each .page (which we’ll generate) will have a fixed height with top & bottom margins */
+      .page {
+        width: 8.5in;
+        height: 11in;
+        margin: 0 auto;
+        position: relative;
+        page-break-after: always;
+      }
+      /* Page header for script pages: auto page number */
+      .pageHeader {
+        position: absolute;
+        top: 0.2in;
+        right: 0.2in;
+        font-size: 12pt;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Tab Navigation -->
+  <div id="tabs">
+    <div class="tab active" data-tab="coverTab">Cover</div>
+    <div class="tab" data-tab="scriptTab">Script</div>
+  </div>
+
+  <!-- Cover Page Editor -->
+  <div id="coverTab" class="tab-content active">
+    <div id="coverContent" class="coverContainer">
+      <div id="coverMain">
+        <textarea id="coverTitle" class="coverField" placeholder="SCREENPLAY TITLE" rows="2"></textarea>
+        <div id="titleLine"></div>
+        <div id="coverBy" class="coverField">written by</div>
+        <input type="text" id="coverAuthor" class="coverField" placeholder="Author Name">
+        <input type="text" id="coverDraft" class="coverField" placeholder="Draft #">
+        <input type="text" id="coverDate" class="coverField" placeholder="Date (MM/DD/YYYY)">
+      </div>
+      <div id="coverContact">
+        <input type="text" id="coverEmail" class="coverField" placeholder="Email">
+        <input type="text" id="coverWebsite" class="coverField" placeholder="Website">
+        <input type="text" id="coverPhone" class="coverField" placeholder="Phone">
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Editor -->
+  <div id="scriptTab" class="tab-content">
+    <div id="toolbar">
+      <button data-type="fadein">Fade In</button>
+      <button data-type="scene">Scene Heading</button>
+      <button data-type="action">Action</button>
+      <button data-type="character">Character</button>
+      <button data-type="dialogue">Dialogue</button>
+      <button data-type="parenthetical">Parenthetical</button>
+      <button data-type="transition">Transition</button>
+    </div>
+    <div id="script" class="scriptContainer" contenteditable="true"></div>
+  </div>
+
+  <!-- Print/Export Button -->
+  <button id="printButton" onclick="paginateAndPrint()">Print/Export as PDF</button>
+
+  <script>
+    // Tab Switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+
+    // Smart Formatting: if text is selected, wrap it; if not, insert at caret.
+    function applyFormatting(formatClass, defaultText) {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      if (selection.isCollapsed) {
+        document.execCommand('insertHTML', false, '<p class="' + formatClass + '">' + defaultText + '</p>');
+      } else {
+        const selectedText = selection.toString();
+        document.execCommand('insertHTML', false, '<p class="' + formatClass + '">' + selectedText + '</p>');
+      }
+    }
+
+    // Helper: get the last character element from the script container
+    function getLastCharacter() {
+      const script = document.getElementById('script');
+      const children = script.children;
+      for (let i = children.length - 1; i >= 0; i--) {
+        if (children[i].classList.contains('character')) {
+          return children[i];
+        }
+      }
+      return null;
+    }
+
+    // Toolbar Button Functionality
+    document.getElementById('toolbar').addEventListener('click', function (event) {
+      if (event.target.tagName === 'BUTTON') {
+        const type = event.target.getAttribute('data-type');
+        switch (type) {
+          case 'fadein':
+            applyFormatting('fade-in', 'FADE IN:');
+            break;
+          case 'scene':
+            applyFormatting('scene-heading', 'INT. LOCATION - TIME');
+            break;
+          case 'action':
+            applyFormatting('action', 'Action description...');
+            break;
+          case 'character': {
+            const previousCharacter = getLastCharacter();
+            applyFormatting('character', 'CHARACTER NAME');
+            setTimeout(() => {
+              const script = document.getElementById('script');
+              const children = script.children;
+              const newCharacter = children[children.length - 1];
+              if (previousCharacter) {
+                const prevName = previousCharacter.innerText.replace(" (CONT'D)", "").trim();
+                const newName = newCharacter.innerText.trim();
+                if (prevName === newName && !newCharacter.innerText.includes("(CONT'D)")) {
+                  newCharacter.innerText = newCharacter.innerText + " (CONT'D)";
+                }
+              }
+              // Insert a line break and then a dialogue paragraph on a new line.
+              document.execCommand('insertHTML', false, '<br><p class="dialogue">Dialogue text...</p>');
+            }, 100);
+            break;
+          }
+          case 'dialogue':
+            applyFormatting('dialogue', 'Dialogue text...');
+            break;
+          case 'parenthetical':
+            applyFormatting('parenthetical', '(Parenthetical)');
+            break;
+          case 'transition':
+            applyFormatting('transition', 'CUT TO:');
+            break;
+          default:
+            break;
+        }
+      }
+    });
+
+    // Pagination: split the script content into fixed-height pages.
+    function paginateScript() {
+      // Define the fixed content area height (in pixels)
+      // For example, if 11in page with 1in top and bottom margins leaves 9in for content.
+      const pageContentHeight = 9 * 96; // 9 inches * 96px/inch = 864px
+      const scriptContainer = document.getElementById('script');
+      // Create a container for paginated pages (only used for printing)
+      let paginatedContainer = document.getElementById('paginatedContainer');
+      if (paginatedContainer) {
+        paginatedContainer.parentNode.removeChild(paginatedContainer);
+      }
+      paginatedContainer = document.createElement('div');
+      paginatedContainer.id = 'paginatedContainer';
+      // Hide offscreen
+      paginatedContainer.style.position = 'absolute';
+      paginatedContainer.style.top = '-10000px';
+      paginatedContainer.style.left = '0';
+      document.body.appendChild(paginatedContainer);
+      
+      // Create pages by moving children from scriptContainer into new page containers
+      let currentPage = document.createElement('div');
+      currentPage.className = 'page';
+      currentPage.style.height = (11 * 96) + 'px'; // full page height (11in)
+      currentPage.style.position = 'relative';
+      currentPage.style.boxSizing = 'border-box';
+      // Add header for page number
+      let pageNumber = 1;
+      function addPageNumber(pageDiv, number) {
+        let header = document.createElement('div');
+        header.className = 'pageHeader';
+        header.style.position = 'absolute';
+        header.style.top = '0.2in';
+        header.style.right = '0.2in';
+        header.style.fontSize = '12pt';
+        header.innerText = number + '.';
+        pageDiv.appendChild(header);
+      }
+      addPageNumber(currentPage, pageNumber);
+      
+      // Clone all children of scriptContainer into an array
+      let children = Array.from(scriptContainer.childNodes);
+      children.forEach(child => {
+        currentPage.appendChild(child);
+        // If currentPage's content height exceeds our pageContentHeight, then remove last element and start a new page.
+        if (currentPage.scrollHeight > pageContentHeight) {
+          // Remove the last child from the current page (it belongs to the next page)
+          currentPage.removeChild(child);
+          // Append the current page to the paginated container
+          paginatedContainer.appendChild(currentPage);
+          // Start a new page
+          pageNumber++;
+          currentPage = document.createElement('div');
+          currentPage.className = 'page';
+          currentPage.style.height = (11 * 96) + 'px';
+          currentPage.style.position = 'relative';
+          currentPage.style.boxSizing = 'border-box';
+          addPageNumber(currentPage, pageNumber);
+          // Append the child that didn't fit into the new page
+          currentPage.appendChild(child);
+        }
+      });
+      // Append the final page if it has any content
+      if (currentPage.childNodes.length > 0) {
+        paginatedContainer.appendChild(currentPage);
+      }
+      return paginatedContainer;
+    }
+
+    // When printing, paginate the script and replace the script tab with paginated pages.
+    function paginateAndPrint() {
+      const paginated = paginateScript();
+      // Hide the original script container during printing
+      document.getElementById('scriptTab').style.display = 'none';
+      window.print();
+      // After printing, remove the paginated container and show the original
+      document.body.removeChild(paginated);
+      document.getElementById('scriptTab').style.display = 'block';
+    }
+
+    // Bind the Print/Export button
+    document.getElementById('printButton').addEventListener('click', paginateAndPrint);
+  </script>
+
+  <!-- PRINT STYLES -->
+  <style media="print">
+    body { margin: 0; }
+    #tabs, #toolbar, #printButton { display: none; }
+    .coverContainer, .scriptContainer { display: none; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      margin: 0 auto;
+      position: relative;
+      page-break-after: always;
+    }
+    .pageHeader {
+      position: absolute;
+      top: 0.2in;
+      right: 0.2in;
+      font-size: 12pt;
+    }
+  </style>
+</body>
+</html>
