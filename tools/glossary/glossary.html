@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Glossary</title>
+<style>
+    /* ---- Global Styles & Body ---- */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e0e0e0;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .messenger-container {
+        display: flex;
+        width: 100%;
+        max-width: 900px;
+        height: 70vh;
+        min-height: 500px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        flex-direction: column;
+    }
+
+    /* ---- Tab Menu ---- */
+    .tab-menu {
+        display: flex;
+        border-bottom: 1px solid #ccc;
+    }
+    .tab-button {
+        flex-grow: 1;
+        text-align: center;
+        padding: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: #f7f7f7;
+        border: none;
+        outline: none;
+        transition: background-color 0.2s;
+    }
+    .tab-button.active {
+        background-color: #4A90E2;
+        color: white;
+    }
+
+    /* ---- Content Panels Container ---- */
+    .content-container {
+        display: flex;
+        flex-grow: 1;
+        position: relative;
+    }
+
+    .tab-content {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        flex-direction: row;
+    }
+    .tab-content.active {
+        display: flex;
+    }
+
+    /* ---- Left Panel (Contact List) ---- */
+    .contact-list {
+        width: 300px;
+        flex-shrink: 0;
+        border-right: 1px solid #ddd;
+        background-color: #f7f7f7;
+        display: flex;
+        flex-direction: column;
+    }
+    .contact-header {
+        background-color: #4A90E2;
+        color: white;
+        padding: 15px;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-align: center;
+    }
+    .contact-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-y: auto;
+    }
+    .contact-list li {
+        padding: 12px 15px;
+        border-bottom: 1px dashed #eee;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+    }
+    .contact-list li:hover { background-color: #e6e6e6; }
+    .contact-list li.active { background-color: #cfe2f7; font-weight: bold; }
+    .contact-icon {
+        width: 30px;
+        height: 30px;
+        background-color: #ccc;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #fff;
+        margin-right: 10px;
+        font-size: 0.9em;
+        text-transform: uppercase;
+    }
+    .filter-container {
+        padding: 10px 15px;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ddd;
+    }
+    .filter-container select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-family: inherit;
+    }
+
+    /* ---- Right Panel (Chat Window) ---- */
+    .chat-window {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #E6F0F2;
+    }
+    .chat-header {
+        background-color: #E6F0F2;
+        border-bottom: 1px solid #ddd;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+    }
+    .chat-header h2 {
+        font-size: 1.2em;
+        margin: 0;
+    }
+    .chat-header p {
+        font-size: 0.8em;
+        font-weight: normal;
+        color: #666;
+        margin: 5px 0 0 0;
+    }
+    #chat-messages {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .message-bubble {
+        max-width: 80%;
+        padding: 10px 15px;
+        border-radius: 20px;
+        line-height: 1.4;
+        position: relative;
+    }
+    .message-bubble.incoming { background-color: #D3EAFB; color: #333; border-bottom-left-radius: 5px; align-self: flex-start; }
+    .message-bubble.outgoing { background-color: #B2D8F7; color: #333; align-self: flex-end; border-bottom-right-radius: 5px; }
+    .message-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+    .message-bubble.incoming::before { border-width: 0 10px 10px 0; border-color: transparent #D3EAFB transparent transparent; left: -10px; bottom: 0; }
+    .message-bubble.outgoing::before { border-width: 0 0 10px 10px; border-color: transparent transparent transparent #B2D8F7; right: -10px; bottom: 0; }
+    .message-text p { margin: 0; }
+    .message-text img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
+    #initial-message { align-self: center; text-align: center; color: #888; font-style: italic; margin-top: 50px; }
+
+    /* ---- New SVG Graph Styles ---- */
+    .graph-container {
+        flex-grow: 1;
+        position: relative;
+        background-color: #fff;
+        overflow: hidden;
+    }
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+    .link {
+        stroke: #ccc;
+        stroke-opacity: 0.6;
+        transition: stroke-width 0.2s, stroke 0.2s;
+    }
+    .link.highlighted {
+        stroke: #4A90E2;
+        stroke-width: 3px;
+        stroke-opacity: 1;
+    }
+    .node {
+        cursor: pointer;
+    }
+    .node.group {
+        fill: #4A90E2;
+    }
+    .node.word {
+        fill: #ff6961;
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+    .node-label {
+        font-family: sans-serif;
+        text-anchor: middle;
+        alignment-baseline: central;
+        pointer-events: none;
+    }
+    .node.group + .node-label {
+        fill: #fff;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    .node.word + .node-label {
+        fill: #333;
+        font-size: 0.9em;
+    }
+</style>
+</head>
+<body>
+
+<div class="messenger-container">
+    <div class="tab-menu">
+        <button class="tab-button active" onclick="switchTab('chat-tab')">Chat View</button>
+        <button class="tab-button" onclick="switchTab('venn-tab')">Graph View</button>
+    </div>
+
+    <div class="content-container">
+        <div id="chat-tab" class="tab-content active">
+            <div class="contact-list">
+                <div class="contact-header" id="contact-header">My Glossary</div>
+                <div class="filter-container">
+                    <select id="categoryFilter"></select>
+                </div>
+                <ul id="contact-list-ul"></ul>
+            </div>
+            <div class="chat-window">
+                <div class="chat-header" id="chat-header">
+                    <p>Select a term to see the definition</p>
+                </div>
+                <div id="chat-messages">
+                    <div id="initial-message">Click on a glossary term from the left panel to begin.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="venn-tab" class="tab-content">
+            <div class="graph-container">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="glossary-data.js"></script>
+
+<script>
+    const contactListUl = document.getElementById('contact-list-ul');
+    const chatHeader = document.getElementById('chat-header');
+    const chatMessagesContainer = document.getElementById('chat-messages');
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const graphContainer = document.querySelector('.graph-container');
+    const categoryFilter = document.getElementById('categoryFilter');
+    let svgGenerated = false;
+
+    function switchTab(tabId) {
+        tabButtons.forEach(button => button.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const selectedButton = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+        const selectedContent = document.getElementById(tabId);
+        selectedButton.classList.add('active');
+        selectedContent.classList.add('active');
+        if (tabId === 'venn-tab' && !svgGenerated) {
+            renderGraph();
+            svgGenerated = true;
+        }
+    }
+
+    function populateFilterDropdown() {
+        const groupSet = new Set();
+        glossaryData.forEach(item => item.groups.forEach(group => groupSet.add(group)));
+        const sortedGroups = Array.from(groupSet).sort();
+        
+        categoryFilter.innerHTML = '<option value="all">All</option>';
+        sortedGroups.forEach(group => {
+            const option = document.createElement('option');
+            option.value = group;
+            option.textContent = group;
+            categoryFilter.appendChild(option);
+        });
+        
+        categoryFilter.addEventListener('change', (event) => {
+            populateContactList(event.target.value);
+        });
+    }
+
+    function populateContactList(filterCategory = 'all') {
+        // Clear existing list
+        contactListUl.innerHTML = '';
+        
+        // Filter the data
+        let filteredData = glossaryData;
+        if (filterCategory !== 'all') {
+            filteredData = glossaryData.filter(item => item.groups.includes(filterCategory));
+        }
+
+        const sortedData = [...filteredData].sort((a, b) => a.word.localeCompare(b.word));
+
+        sortedData.forEach(item => {
+            const li = document.createElement('li');
+            li.setAttribute('data-word', item.word);
+            li.innerHTML = `
+                <div class="contact-icon">${item.word.charAt(0)}</div>
+                <span>${item.word}</span>
+            `;
+            li.addEventListener('click', () => displayMeaning(item));
+            contactListUl.appendChild(li);
+        });
+        
+        // Update the count in the header
+        const contactHeader = document.getElementById('contact-header');
+        contactHeader.textContent = `My Glossary (${sortedData.length})`;
+    }
+
+    function displayMeaning(item) {
+        const allListItems = document.querySelectorAll('#contact-list-ul li');
+        allListItems.forEach(li => li.classList.remove('active'));
+        const selectedLi = document.querySelector(`[data-word="${item.word}"]`);
+        if (selectedLi) {
+            selectedLi.classList.add('active');
+        }
+        chatMessagesContainer.innerHTML = '';
+        document.getElementById('initial-message')?.remove();
+        
+        // Update the header with the word and its groups
+        const groupsString = item.groups.join(', ');
+        chatHeader.innerHTML = `<h2>${item.word}</h2><p>Groups: ${groupsString}</p>`;
+
+        item.messages.forEach(message => {
+            const bubble = document.createElement('div');
+            bubble.className = `message-bubble ${message.type}`;
+            bubble.innerHTML = `<div class="message-text">${message.content}</div>`;
+            chatMessagesContainer.appendChild(bubble);
+        });
+    }
+
+    function renderGraph() {
+        graphContainer.innerHTML = '';
+        const width = graphContainer.clientWidth;
+        const height = graphContainer.clientHeight;
+        
+        if (width === 0 || height === 0) {
+            console.error("Graph container has no dimensions. Cannot render.");
+            return;
+        }
+
+        const svg = d3.select(graphContainer).append("svg")
+            .attr("viewBox", [0, 0, width, height]);
+
+        // Add a parent group to hold all graph elements for zooming
+        const g = svg.append("g");
+
+        // Build the graph data
+        const groupSet = new Set();
+        glossaryData.forEach(d => d.groups.forEach(g => groupSet.add(g)));
+        const sortedGroups = Array.from(groupSet).sort();
+
+        const nodes = [];
+        const links = [];
+
+        // Add group nodes
+        sortedGroups.forEach(g => {
+            nodes.push({ id: g, type: 'group' });
+        });
+
+        // Add word nodes and links to groups
+        glossaryData.forEach(d => {
+            nodes.push({ id: d.word, type: 'word' });
+            d.groups.forEach(g => {
+                links.push({ source: d.word, target: g });
+            });
+        });
+
+        // Create the force simulation
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+        
+        // Render the links
+        const link = g.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link");
+        
+        // Render the group nodes as scalable rectangles
+        const groupNodes = g.append("g")
+            .attr("class", "group-nodes")
+            .selectAll("rect")
+            .data(nodes.filter(d => d.type === 'group'))
+            .enter().append("rect")
+            .attr("class", "node group")
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Render the word nodes as circles
+        const wordNodes = g.append("g")
+            .attr("class", "word-nodes")
+            .selectAll("circle")
+            .data(nodes.filter(d => d.type === 'word'))
+            .enter().append("circle")
+            .attr("class", "node word")
+            .attr("r", 6)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Render the labels
+        const labels = g.append("g")
+            .attr("class", "labels")
+            .selectAll("text")
+            .data(nodes)
+            .enter().append("text")
+            .attr("class", "node-label")
+            .text(d => d.id)
+            .style("fill", d => d.type === 'group' ? "white" : "black")
+            .style("font-size", d => d.type === 'group' ? "12px" : "10px")
+            .attr("dy", d => d.type === 'group' ? "0.3em" : "-10px");
+
+        // Event listener for node clicks
+        function clickHandler(event, d) {
+            // Clear all highlights
+            link.classed("highlighted", false);
+
+            // Highlight links connected to the clicked node
+            link.filter(l => l.source.id === d.id || l.target.id === d.id)
+                .classed("highlighted", true);
+
+            // If it's a word node, display its meaning in the chat view
+            if (d.type === 'word') {
+                const item = glossaryData.find(g => g.word === d.id);
+                if (item) {
+                    displayMeaning(item);
+                }
+            }
+        }
+
+        wordNodes.on("click", clickHandler);
+        groupNodes.on("click", clickHandler);
+        
+        // Update positions on each tick of the simulation
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            wordNodes
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+            
+            groupNodes
+                .attr("width", d => d.id.length * 8 + 20)
+                .attr("height", 30)
+                .attr("x", d => d.x - (d.id.length * 8 + 20) / 2)
+                .attr("y", d => d.y - 15);
+
+            labels
+                .attr("x", d => d.x)
+                .attr("y", d => d.y);
+        });
+
+        // Dragging functionality
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Add zoom functionality
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            });
+        
+        svg.call(zoom);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        populateFilterDropdown();
+        populateContactList();
+    });
+</script>
+
+</body>
+</html>
