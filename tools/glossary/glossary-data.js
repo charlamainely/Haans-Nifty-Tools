@@ -30,7 +30,8 @@ const glossaryData = [
     { word: "Flash Games", groups: ["Media & Design", "Memory & Affect", "Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Flash games were browser-based games central to early internet culture." },
         { type: "outgoing", content: "They hold both nostalgic and cultural heritage value." },
-        { type: "incoming", content: "Here's an example!<br><br><img src=\"https://www.cnet.com/a/img/resize/6d84c4105b98e5c68f9e2c33cc266c0aca589129/hub/2008/05/22/1b92b71c-cbf2-11e2-9a4a-0291187b029a/growcube.jpg?auto=webp&width=1200\">"}
+        { type: "incoming", content: "Here's an example!<img src=\"https://www.cnet.com/a/img/resize/6d84c4105b98e5c68f9e2c33cc266c0aca589129/hub/2008/05/22/1b92b71c-cbf2-11e2-9a4a-0291187b029a/growcube.jpg?auto=webp&width=1200\">"},
+        { type: "outgoing", content: "Oh I loved this game!!!" },
     ]},
     { word: "Flash Aesthetics", groups: ["Media & Design"], messages: [
         { type: "incoming", content: "Flash aesthetics include bold vector graphics, tween animations, and quirky interactions." },
@@ -60,7 +61,7 @@ const glossaryData = [
     { word: "Game Loop", groups: ["Media & Design"], messages: [
         { type: "incoming", content: "A game loop is the core cycle of play: act → feedback → repeat." },
         { type: "outgoing", content: "It keeps players engaged through repetition and iteration." },
-        {type:"incoming", content: "<img src='https://mobilefreetoplay.com/wp-content/uploads/2017/12/crafting-a-strong-core-loop-1.png'> <br> Something like this."}
+        {type:"incoming", content: "<img src='https://mobilefreetoplay.com/wp-content/uploads/2017/12/crafting-a-strong-core-loop-1.png'> Something like this."}
     ]},
     { word: "Flow State", groups: ["Media & Design", "Memory & Affect"], messages: [
         { type: "incoming", content: "Flow state is a psychological state of deep focus when challenge matches skill." },
@@ -118,7 +119,12 @@ const glossaryData = [
     ]},
     { word: "Cultural Memory", groups: ["Memory & Affect", "Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Cultural memory is shared remembrance across groups, often tied to media." },
-        { type: "outgoing", content: "Flash culture is a prime example of digital cultural memory." }
+        { type: "outgoing", content: "Flash culture is a prime example of digital cultural memory." },
+        { type: "incoming", content: "So how is cultural memory different from collective memory?"},
+        { type: "outgoing", content:"Collective memory focuses on the content and process of shared remembrance, often within a limited time span,"},
+        { type: "outgoing", content:"whereas cultural memory emphasizes the methods (like rituals, artifacts, and narratives)"},
+        { type: "outgoing", content:"and longer-term, stabilized stability needed to maintain a collective identity and understanding of the past."},
+        { type: "incoming", content: "Ah got it!"},
     ]},
     { word: "Autobiographical Memory", groups: ["Memory & Affect"], messages: [
         { type: "incoming", content: "Autobiographical memory refers to recollection of personal life events." },
@@ -139,7 +145,8 @@ const glossaryData = [
     ]},
     { word: "Critical Periods (Memory)", groups: ["Memory & Affect"], messages: [
         { type: "incoming", content: "Critical periods are developmental stages when experiences are more likely to be encoded as long-term memory." },
-        { type: "outgoing", content: "Early internet experiences often coincide with such periods." }
+        { type: "outgoing", content: "Early internet experiences often coincide with such periods." },
+        {type:"incoming", content:"During these periods, the brain is highly plastic, forming crucial connections that can have lifelong impacts on learning and behavior."}
     ]},
     { word: "Encoding Specificity", groups: ["Memory & Affect"], messages: [
         { type: "incoming", content: "Encoding specificity means recall is stronger when context at retrieval matches context at encoding." },
@@ -165,7 +172,10 @@ const glossaryData = [
     ]},
     { word: "Time Capsule Media", groups: ["Memory & Affect"], messages: [
         { type: "incoming", content: "Time capsule media preserve a cultural moment in digital form." },
-        { type: "outgoing", content: "Flash game portals are an example of digital time capsules." }
+        { type: "outgoing", content: "Flash game portals are an example of digital time capsules." },
+        { type: "incoming", content: "So... should we bury them?" },
+        { type: "outgoing", content: "They're DIGITAL!" },
+        { type: "incoming", content: "Oh right." },
     ]},
     { word: "Collective Imagination", groups: ["Memory & Affect"], messages: [
         { type: "incoming", content: "Collective imagination refers to shared dreamscapes or visions within a generation." },
@@ -193,7 +203,9 @@ const glossaryData = [
     ]},
     { word: "Born-Digital Heritage", groups: ["Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Born-digital heritage refers to cultural works originally created in digital form." },
-        { type: "outgoing", content: "Flash games are examples of born-digital heritage." }
+        { type: "outgoing", content: "Flash games are examples of born-digital heritage." },
+        { type: "incoming", content:" <a href='https://ieeexplore.ieee.org/document/5236324' target='_blank'>HERE'S</a> an example of born-digital cultural heritage being preserved. "},
+        
     ]},
     { word: "Migration vs. Emulation", groups: ["Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Migration updates files to newer formats, while emulation replicates old environments." },
@@ -205,7 +217,8 @@ const glossaryData = [
     ]},
     { word: "Living Archives", groups: ["Digital Heritage & Preservation", "Memory & Affect"], messages: [
         { type: "incoming", content: "Living archives are evolving repositories shaped by user participation." },
-        { type: "outgoing", content: "They blur the line between archive, memory, and play." }
+        { type: "outgoing", content: "They blur the line between archive, memory, and play." },
+        { type: "incoming", content: "One example is the Serendepity Living Archive <img src='https://www.serendipity-uk.com/wp-content/uploads/2022/12/Serendipity_logo_BW_2024-2.png'>" },
     ]},
     { word: "Digital Curation", groups: ["Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Digital curation is the professional management and presentation of digital collections." },
@@ -247,7 +260,8 @@ const glossaryData = [
     ]},
     { word: "Ephemeral Platforms", groups: ["Internet & Platform Culture"], messages: [
         { type: "incoming", content: "Ephemeral platforms are online services that disappear quickly, like Geocities or MySpace." },
-        { type: "outgoing", content: "Their loss contributes to digital heritage gaps." }
+        { type: "outgoing", content: "Their loss contributes to digital heritage gaps." },
+        { type: "outgoing", content: "What's MySpace?" }
     ]},
     { word: "Platform Closure", groups: ["Internet & Platform Culture"], messages: [
         { type: "incoming", content: "Platform closure happens when companies discontinue services or stores." },
@@ -282,11 +296,14 @@ const glossaryData = [
     ]},
     { word: "Digital Ownership", groups: ["Activism & Industry Debates","Internet & Platform Culture"], messages: [
         { type: "incoming", content: "Digital ownership refers to having verifiable rights, control, and ownership over digital assets like virtual goods, music, and art." },
-        { type: "outgoing", content: "Moving beyond simply having access or a license." }
+        { type: "outgoing", content: "Moving beyond simply having access or a license." },
+        { type: "outgoing", content: "Do you really own the games that you buy?" }
     ]},
     { word: "Access vs. Ownership", groups: ["Activism & Industry Debates","Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Access vs. ownership debates concern whether digital media users truly 'own' what they buy." },
-        { type: "outgoing", content: "Platform closures expose the fragility of digital ownership." }
+        { type: "outgoing", content: "Platform closures expose the fragility of digital ownership." },
+        { type: "outgoing", content: "Companies can decide to stop hosting games user already purchased, and there's nothing stopping them to do so." },
+        { type: "incoming", content: "They can do WHAT?! But I paid $40 for that!!!"}
     ]},
     { word: "Archival Activism", groups: ["Activism & Industry Debates"], messages: [
         { type: "incoming", content: "Archival activism is grassroots preservation work by communities when institutions fail." },
@@ -308,6 +325,7 @@ const glossaryData = [
     ]},
     { word: "Playable Nostalgia", groups: ["Media & Design", "Memory & Affect", "Digital Heritage & Preservation"], messages: [
         { type: "incoming", content: "Playable nostalgia is evoking memory and emotion through interactive, game-like experiences." },
-        { type: "outgoing", content: "It bridges technology, affect, and heritage preservation." }
+        { type: "outgoing", content: "It bridges technology, affect, and heritage preservation." },
+        {type:"incoming", content:"This can involve re-releasing old games, creating modern games with classic aesthetics, or even building dedicated experiential pop-up events focused on toys and childhood memories"}
     ]}
 ];
