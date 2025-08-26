@@ -74,7 +74,8 @@ const glossaryData = [
     ]},
     { word: "UI Aesthetics", groups: ["Media & Design"], messages: [
         { type: "incoming", content: "UI aesthetics are the stylistic qualities of user interfaces." },
-        { type: "outgoing", content: "Flash-era games often featured bright colors and playful UI design." }
+        { type: "outgoing", content: "Flash-era games often featured bright colors and playful UI design." },
+        {type:"outgoing", content:"<img src='https://girlsgogamescdn.com/assets/girlsgogames/og_image-44dfad3079fdbc435203c47c96573be0de683beba84fa7ab80679dcada0e79b1.jpg'>"}
     ]},
     { word: "Accessibility (Games)", groups: ["Media & Design"], messages: [
         { type: "incoming", content: "Game accessibility refers to how easily players of different abilities can engage with a game." },
