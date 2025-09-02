@@ -8,7 +8,7 @@
     /* ---- Global Styles & Body ---- */
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #e0e0e0;
+        background-color: #d0d0d0;
         margin: 0;
         padding: 20px;
         display: flex;
@@ -23,18 +23,106 @@
         max-width: 900px;
         height: 70vh;
         min-height: 500px;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        border: 1px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+        border-radius: 15px;
         overflow: hidden;
         flex-direction: column;
+    }
+
+    /* --- Window Bar --- */
+    .window-bar {
+        height: 25px;
+        background: linear-gradient(90deg, #316AC5 0%, #20539E 100%);
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        cursor: move;
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .window-title {
+        font-size: 0.9em;
+    }
+
+    .window-controls {
+        display: flex;
+        gap: 5px;
+    }
+
+    .window-button {
+        width: 15px;
+        height: 15px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #f7f7f7 0%, #e0e0e0 100%);
+        border: 1px solid #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        user-select: none;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .window-button:hover {
+        background: #ccc;
+    }
+
+    .window-button.close {
+        background: linear-gradient(180deg, #FF6F6F 0%, #D84242 100%);
+        border-color: #A92D2D;
+        color: white;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    }
+    .window-button.close:hover {
+        background: #D84242;
+    }
+
+    /* --- Skeuomorphic Styles (Extra Shiny) --- */
+    .glossy-panel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.1), 0 6px 15px rgba(0, 0, 0, 0.2);
+        color: #222;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+    }
+    
+    .glossy-button {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        cursor: pointer;
+    }
+
+    .glossy-button:hover {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%);
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+        transform: translateY(1px);
+    }
+
+    .glossy-button.active, .glossy-button:active {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.9) 100%);
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 -1px 1px rgba(255, 255, 255, 0.5);
+        transform: translateY(1px);
     }
 
     /* ---- Tab Menu ---- */
     .tab-menu {
         display: flex;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background: linear-gradient(180deg, #f7f7f7 0%, #e0e0e0 100%);
     }
     .tab-button {
         flex-grow: 1;
@@ -42,14 +130,17 @@
         padding: 15px;
         font-weight: bold;
         cursor: pointer;
-        background-color: #f7f7f7;
         border: none;
         outline: none;
         transition: background-color 0.2s;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     .tab-button.active {
-        background-color: #4A90E2;
-        color: white;
+        background: linear-gradient(180deg, #316AC5 0%, #20539E 100%);
+        color: #fff;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-bottom: 3px solid #1a427f;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     /* ---- Content Panels Container ---- */
@@ -76,18 +167,53 @@
     .contact-list {
         width: 300px;
         flex-shrink: 0;
-        border-right: 1px solid #ddd;
-        background-color: #f7f7f7;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 100%);
         display: flex;
         flex-direction: column;
     }
+
+    /* --- Profile Bar Styling --- */
+    .profile-bar {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background: transparent;
+    }
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #555;
+        border-radius: 50%;
+        margin-right: 10px;
+        border: 2px solid white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .profile-info {
+        flex-grow: 1;
+    }
+    .profile-name {
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+    .profile-status {
+        font-size: 0.8em;
+        color: #777;
+        margin: 0;
+    }
+
     .contact-header {
-        background-color: #4A90E2;
-        color: white;
+        background: linear-gradient(180deg, #316AC5 0%, #20539E 100%);
+        color: #fff;
         padding: 15px;
         font-size: 1.2em;
         font-weight: bold;
         text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
     .contact-list ul {
         list-style: none;
@@ -97,27 +223,35 @@
     }
     .contact-list li {
         padding: 12px 15px;
-        border-bottom: 1px dashed #eee;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         cursor: pointer;
         transition: background-color 0.2s;
         display: flex;
         align-items: center;
+        color: #333;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
     }
     .contact-list li:hover { background-color: #e6e6e6; }
-    .contact-list li.active { background-color: #cfe2f7; font-weight: bold; }
+    .contact-list li.active { 
+        background-color: #d6d6d6; 
+        font-weight: bold; 
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
     .contact-icon {
         width: 30px;
         height: 30px;
-        background-color: #ccc;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        color: #fff;
+        color: #333;
         margin-right: 10px;
         font-size: 0.9em;
         text-transform: uppercase;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     .filter-container {
         padding: 10px 15px;
@@ -130,6 +264,7 @@
         border-radius: 5px;
         border: 1px solid #ccc;
         font-family: inherit;
+        background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%);
     }
 
     /* ---- Right Panel (Chat Window) ---- */
@@ -137,15 +272,17 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        background-color: #E6F0F2;
+        background-color: #f8f8f8;
     }
     .chat-header {
-        background-color: #E6F0F2;
-        border-bottom: 1px solid #ddd;
+        background: linear-gradient(180deg, #316AC5 0%, #20539E 100%);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         padding: 15px;
         text-align: center;
         font-weight: bold;
-        color: #333;
+        color: #fff;
+        box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
     .chat-header h2 {
         font-size: 1.2em;
@@ -154,7 +291,7 @@
     .chat-header p {
         font-size: 0.8em;
         font-weight: normal;
-        color: #666;
+        color: rgba(255, 255, 255, 0.8);
         margin: 5px 0 0 0;
     }
     #chat-messages {
@@ -165,6 +302,7 @@
         flex-direction: column;
         gap: 15px;
         align-items: flex-start;
+        background-image: url('data:image/svg+xml,%3Csvg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23d0d0d0" fill-opacity="0.2"%3E%3Cpath d="M0 0h1v1H0zM2 2h1v1H2zM4 4h1v1H4zM6 6h1v1H6zM8 8h1v1H8z"%3E%3C/path%3E%3C/g%3E%3C/svg%3E');
     }
     .message-bubble {
         max-width: 80%;
@@ -172,12 +310,29 @@
         border-radius: 20px;
         line-height: 1.4;
         position: relative;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
-    .message-bubble.incoming { background-color: #D3EAFB; color: #333; border-bottom-left-radius: 5px; align-self: flex-start; }
-    .message-bubble.outgoing { background-color: #B2D8F7; color: #333; align-self: flex-end; border-bottom-right-radius: 5px; }
+    .message-bubble.incoming { 
+        background: linear-gradient(180deg, #F0F0F0 0%, #E0E0E0 100%);
+        color: #333; 
+        border-bottom-left-radius: 5px; 
+        align-self: flex-start; 
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-shadow: none;
+    }
+    .message-bubble.outgoing { 
+        background: linear-gradient(180deg, #ff80bf 0%, #ff1493 100%);
+        color: #fff; 
+        align-self: flex-end; 
+        border-bottom-right-radius: 5px; 
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
     .message-bubble::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
-    .message-bubble.incoming::before { border-width: 0 10px 10px 0; border-color: transparent #D3EAFB transparent transparent; left: -10px; bottom: 0; }
-    .message-bubble.outgoing::before { border-width: 0 0 10px 10px; border-color: transparent transparent transparent #B2D8F7; right: -10px; bottom: 0; }
+    .message-bubble.incoming::before { border-width: 0 10px 10px 0; border-color: transparent #E0E0E0 transparent transparent; left: -10px; bottom: 0; }
+    .message-bubble.outgoing::before { border-width: 0 0 10px 10px; border-color: transparent transparent transparent #ff1493; right: -10px; bottom: 0; }
     .message-text p { margin: 0; }
     .message-text img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
     #initial-message { align-self: center; text-align: center; color: #888; font-style: italic; margin-top: 50px; }
@@ -186,7 +341,7 @@
     .graph-container {
         flex-grow: 1;
         position: relative;
-        background-color: #fff;
+        background: linear-gradient(180deg, #fcfcfc 0%, #e8e8e8 100%);
         overflow: hidden;
     }
     svg {
@@ -199,19 +354,23 @@
         transition: stroke-width 0.2s, stroke 0.2s;
     }
     .link.highlighted {
-        stroke: #4A90E2;
+        stroke: #ff1493;
         stroke-width: 3px;
         stroke-opacity: 1;
     }
-    .node {
+    
+    .node-group {
         cursor: pointer;
     }
-    .node.group {
-        fill: #4A90E2;
+
+    .node-shape.group {
+        fill: url(#blueGlossyGradient);
+        stroke: #20539E;
+        stroke-width: 1.5px;
     }
-    .node.word {
-        fill: #ff6961;
-        stroke: #fff;
+    .node-shape.word {
+        fill: url(#pinkGlossyGradient);
+        stroke: #E50073;
         stroke-width: 1.5px;
     }
     .node-label {
@@ -220,35 +379,55 @@
         alignment-baseline: central;
         pointer-events: none;
     }
-    .node.group + .node-label {
+    .node-group.group .node-label {
         fill: #fff;
-        font-size: 1.2em;
+        font-size: 0.8em;
         font-weight: bold;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
     }
-    .node.word + .node-label {
-        fill: #333;
-        font-size: 0.9em;
+    .node-group.word .node-label {
+        fill: #000;
+        font-size: 0.6em;
+        font-weight: bold;
+        text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
     }
 </style>
 </head>
 <body>
 
 <div class="messenger-container">
-    <div class="tab-menu">
+    <div class="window-bar">
+        <span class="window-title">Interactive Glossary</span>
+        <div class="window-controls">
+            <div class="window-button">-</div>
+            <div class="window-button">&#x25A1;</div>
+            <div class="window-button close">&#x2715;</div>
+        </div>
+    </div>
+    <div class="tab-menu glossy-panel">
         <button class="tab-button active" onclick="switchTab('chat-tab')">Chat View</button>
         <button class="tab-button" onclick="switchTab('venn-tab')">Graph View</button>
     </div>
 
     <div class="content-container">
         <div id="chat-tab" class="tab-content active">
-            <div class="contact-list">
+            <div class="contact-list glossy-panel">
+                <!-- New Profile Bar -->
+                <div class="profile-bar">
+                    <div class="profile-avatar" style="background-image: url('https://placehold.co/100x100/4c51bf/ffffff?text=U');"></div>
+                    <div class="profile-info">
+                        <p class="profile-name">User 1</p>
+                        <p class="profile-status">Online</p>
+                    </div>
+                </div>
+                <!-- End of New Profile Bar -->
                 <div class="contact-header" id="contact-header">My Glossary</div>
                 <div class="filter-container">
-                    <select id="categoryFilter"></select>
+                    <select id="categoryFilter" class="glossy-button"></select>
                 </div>
                 <ul id="contact-list-ul"></ul>
             </div>
-            <div class="chat-window">
+            <div class="chat-window glossy-panel">
                 <div class="chat-header" id="chat-header">
                     <p>Select a term to see the definition</p>
                 </div>
@@ -260,7 +439,7 @@
 
         <div id="venn-tab" class="tab-content">
             <div class="graph-container">
-                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -269,6 +448,7 @@
 <script src="glossary-data.js"></script>
 
 <script>
+    // Get references to all the important HTML elements
     const contactListUl = document.getElementById('contact-list-ul');
     const chatHeader = document.getElementById('chat-header');
     const chatMessagesContainer = document.getElementById('chat-messages');
@@ -277,6 +457,10 @@
     const categoryFilter = document.getElementById('categoryFilter');
     let svgGenerated = false;
 
+    /**
+     * Switches the active tab in the UI.
+     * @param {string} tabId The ID of the tab to switch to ('chat-tab' or 'venn-tab').
+     */
     function switchTab(tabId) {
         tabButtons.forEach(button => button.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -290,7 +474,16 @@
         }
     }
 
+    /**
+     * Populates the category filter dropdown with unique group names from the glossary data.
+     */
     function populateFilterDropdown() {
+        // The glossaryData is available globally from the included script tag.
+        if (typeof glossaryData === 'undefined') {
+            console.error("glossaryData not found.");
+            return;
+        }
+
         const groupSet = new Set();
         glossaryData.forEach(item => item.groups.forEach(group => groupSet.add(group)));
         const sortedGroups = Array.from(groupSet).sort();
@@ -308,7 +501,16 @@
         });
     }
 
+    /**
+     * Populates the contact list with glossary terms, optionally filtered by category.
+     * @param {string} filterCategory The category to filter by. Defaults to 'all'.
+     */
     function populateContactList(filterCategory = 'all') {
+        if (typeof glossaryData === 'undefined') {
+            console.error("glossaryData not found.");
+            return;
+        }
+        
         // Clear existing list
         contactListUl.innerHTML = '';
         
@@ -327,7 +529,12 @@
                 <div class="contact-icon">${item.word.charAt(0)}</div>
                 <span>${item.word}</span>
             `;
-            li.addEventListener('click', () => displayMeaning(item));
+            li.addEventListener('click', () => {
+                displayMeaning(item);
+                const allListItems = document.querySelectorAll('#contact-list-ul li');
+                allListItems.forEach(li => li.classList.remove('active'));
+                li.classList.add('active');
+            });
             contactListUl.appendChild(li);
         });
         
@@ -336,13 +543,11 @@
         contactHeader.textContent = `My Glossary (${sortedData.length})`;
     }
 
+    /**
+     * Displays the definition and chat messages for a selected glossary term.
+     * @param {object} item The glossary item object.
+     */
     function displayMeaning(item) {
-        const allListItems = document.querySelectorAll('#contact-list-ul li');
-        allListItems.forEach(li => li.classList.remove('active'));
-        const selectedLi = document.querySelector(`[data-word="${item.word}"]`);
-        if (selectedLi) {
-            selectedLi.classList.add('active');
-        }
         chatMessagesContainer.innerHTML = '';
         document.getElementById('initial-message')?.remove();
         
@@ -358,7 +563,15 @@
         });
     }
 
+    /**
+     * Renders the D3.js force-directed graph.
+     */
     function renderGraph() {
+        if (typeof glossaryData === 'undefined') {
+            console.error("glossaryData not found.");
+            return;
+        }
+
         graphContainer.innerHTML = '';
         const width = graphContainer.clientWidth;
         const height = graphContainer.clientHeight;
@@ -373,6 +586,36 @@
 
         // Add a parent group to hold all graph elements for zooming
         const g = svg.append("g");
+
+        // Define a blue gradient for the group rectangles
+        const defs = svg.append("defs");
+        const blueGlossyGradient = defs.append("linearGradient")
+            .attr("id", "blueGlossyGradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+        blueGlossyGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#316AC5");
+        blueGlossyGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#20539E");
+
+        // Define a pink gradient for the word circles
+        const pinkGlossyGradient = defs.append("radialGradient")
+            .attr("id", "pinkGlossyGradient")
+            .attr("cx", "50%")
+            .attr("cy", "50%")
+            .attr("r", "50%")
+            .attr("fx", "65%")
+            .attr("fy", "25%");
+        pinkGlossyGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#ff80bf");
+        pinkGlossyGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#ff1493");
 
         // Build the graph data
         const groupSet = new Set();
@@ -409,65 +652,51 @@
             .enter().append("line")
             .attr("class", "link");
         
-        // Render the group nodes as scalable rectangles
-        const groupNodes = g.append("g")
-            .attr("class", "group-nodes")
-            .selectAll("rect")
-            .data(nodes.filter(d => d.type === 'group'))
-            .enter().append("rect")
-            .attr("class", "node group")
+        // Render the node groups (wraps shape and text)
+        const nodeGroup = g.append("g")
+            .attr("class", "node-groups")
+            .selectAll("g")
+            .data(nodes)
+            .enter().append("g")
+            .attr("class", d => `node-group ${d.type}`)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Append shapes to the node groups
+        nodeGroup.filter(d => d.type === 'group').append("rect")
+            .attr("class", "node-shape group")
             .attr("rx", 5)
             .attr("ry", 5)
-            .call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
+            .attr("width", d => d.id.length * 8 + 20)
+            .attr("height", 30)
+            .attr("x", d => -(d.id.length * 8 + 20) / 2)
+            .attr("y", -15);
+            
+        nodeGroup.filter(d => d.type === 'word').append("circle")
+            .attr("class", "node-shape word")
+            .attr("r", 10);
 
-        // Render the word nodes as circles
-        const wordNodes = g.append("g")
-            .attr("class", "word-nodes")
-            .selectAll("circle")
-            .data(nodes.filter(d => d.type === 'word'))
-            .enter().append("circle")
-            .attr("class", "node word")
-            .attr("r", 6)
-            .call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
-
-        // Render the labels
-        const labels = g.append("g")
-            .attr("class", "labels")
-            .selectAll("text")
-            .data(nodes)
-            .enter().append("text")
+        // Append labels to the node groups
+        nodeGroup.append("text")
             .attr("class", "node-label")
             .text(d => d.id)
-            .style("fill", d => d.type === 'group' ? "white" : "black")
-            .style("font-size", d => d.type === 'group' ? "12px" : "10px")
-            .attr("dy", d => d.type === 'group' ? "0.3em" : "-10px");
+            .attr("dy", "0.3em");
 
         // Event listener for node clicks
-        function clickHandler(event, d) {
-            // Clear all highlights
+        nodeGroup.on("click", (event, d) => {
             link.classed("highlighted", false);
-
-            // Highlight links connected to the clicked node
             link.filter(l => l.source.id === d.id || l.target.id === d.id)
                 .classed("highlighted", true);
 
-            // If it's a word node, display its meaning in the chat view
             if (d.type === 'word') {
                 const item = glossaryData.find(g => g.word === d.id);
                 if (item) {
                     displayMeaning(item);
                 }
             }
-        }
-
-        wordNodes.on("click", clickHandler);
-        groupNodes.on("click", clickHandler);
+        });
         
         // Update positions on each tick of the simulation
         simulation.on("tick", () => {
@@ -476,27 +705,15 @@
                 .attr("y1", d => d.source.y)
                 .attr("x2", d => d.target.x)
                 .attr("y2", d => d.target.y);
-
-            wordNodes
-                .attr("cx", d => d.x)
-                .attr("cy", d => d.y);
             
-            groupNodes
-                .attr("width", d => d.id.length * 8 + 20)
-                .attr("height", 30)
-                .attr("x", d => d.x - (d.id.length * 8 + 20) / 2)
-                .attr("y", d => d.y - 15);
-
-            labels
-                .attr("x", d => d.x)
-                .attr("y", d => d.y);
+            nodeGroup.attr("transform", d => `translate(${d.x}, ${d.y})`);
         });
 
         // Dragging functionality
         function dragstarted(event, d) {
             if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
+            d.fx = event.x;
+            d.fy = event.y;
         }
 
         function dragged(event, d) {
@@ -519,11 +736,21 @@
         
         svg.call(zoom);
     }
+    
+    // The application entry point
+    function init() {
+        // We no longer need to fetch the data as it's provided by the script tag.
+        // We can just check if the global variable exists.
+        if (typeof glossaryData !== 'undefined') {
+            populateFilterDropdown();
+            populateContactList();
+            // The graph will be rendered when the user switches to that tab
+        } else {
+            console.error("glossaryData.js failed to load. Please ensure the file is present.");
+        }
+    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        populateFilterDropdown();
-        populateContactList();
-    });
+    document.addEventListener('DOMContentLoaded', init);
 </script>
 
 </body>
